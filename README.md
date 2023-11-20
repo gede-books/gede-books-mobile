@@ -2,11 +2,10 @@
 Great Educational, Diverse, and Entertaining Books <br>
 *(How to pronounce: ‘Gedebuk’ as in suara jika kita jatuh)*
 <br>
-![Django CI](https://github.com/gede-books/gede-books/actions/workflows/django.yml/badge.svg?branch=master)<br>
 ![Jekyll site CI](https://github.com/gede-books/gede-books/workflows/Jekyll%20site%20CI/badge.svg)
 <br>
 <br>
-Link APK: *[Coming Soon: Something Big is Coming]*
+Link APK: *[Coming Soon: Something Big is Coming]*<br>
 Link Berita Acara Kelompok: [Berita Acara A07](https://docs.google.com/spreadsheets/d/1QA7fqTy-8oRHMcHAYpt84YCdCz06KNfn/edit?usp=drive_link&ouid=113055651365555467863&rtpof=true&sd=true)
 <br>
 <br>
