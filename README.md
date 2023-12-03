@@ -82,3 +82,12 @@ Sumber dataset katalog buku yang digunakan adalah:
 - Menambahkan atau menghapus buku dari daftar buku
 - Mengedit informasi buku
 - Mengelola review buku
+
+<br>
+
+## [Integrasi dengan Situs Web] 🔗
+Berikut adalah langkah-langkah yang akan dilakukan agar aplikasi aplikasi dapat terintegrasi dengan server web:
+- Mengimplementasikan sebuah wrapper class dengan menggunakan library http dan map untuk mendukung penggunaan cookie-based authentication pada aplikasi.
+- Mengimplementasikan REST API pada Django (views.py) dengan menggunakan JsonResponse atau Django JSON Serializer.
+- Merancang antarmuka pengguna (front-end) baru untuk aplikasi mobile, dengan tetap menjadikan desain situs web yang telah ada sebelumnya sebagai dasar acuan.
+- Mengintegrasikan antarmuka pengguna (front-end) dengan sistem backend dengan menggunakan konsep asynchronous HTTP.
