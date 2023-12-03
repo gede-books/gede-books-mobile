@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
 
-class ShopItem {
-  final String name;
-  final IconData icon;
+class Book {
+  final String title;
+  final String author;
+  final String imagePath;
+  final int price;
 
-  ShopItem(this.name, this.icon);
+  Book(this.title, this.author, this.imagePath, this.price);
 }
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({Key? key}) : super(key: key);
 
-  final List<ShopItem> items = [
-    ShopItem("Lihat Produk", Icons.checklist),
-    ShopItem("Tambah Produk", Icons.add_shopping_cart),
-    ShopItem("Logout", Icons.logout),
-  ];
+  final double bookHeight = 50.0; // Tinggi tetap buku
 
-  void _onSearch() {
-    // Define what happens when the search icon is tapped.
-  }
+  // Contoh daftar buku
+  final List<Book> books = [
+    Book("The Declaration of Independence", "Thomas Jefferson", "assets/buku/buku1.jpg", 300000),
+    Book("Alice’s Adventure in Wonderland", "Lewis Carroll", "assets/buku/buku7.jpg", 175000),
+    // Tambahkan lebih banyak buku di sini
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -61,85 +62,116 @@ class MyHomePage extends StatelessWidget {
           child: Container(
             height: 70.0,
             child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            child: TextField(
-              style: TextStyle(
-                fontSize: 14.0, // Smaller font size for the search bar text
-              ),
-              decoration: InputDecoration(
-                hintText: 'Mau cari buku apa hari ini?',
-                hintStyle: TextStyle(
-                  fontSize: 14.0, // Matching font size for the hint
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                child: TextField(
+                  style: TextStyle(
+                    fontSize: 14.0,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Mau cari buku apa hari ini?',
+                    hintStyle: TextStyle(
+                      fontSize: 14.0,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search, color: Colors.grey[600]),
+                      iconSize: 20.0,
+                      onPressed: _onSearch,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
                 ),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search, color: Colors.grey[600]),
-                  iconSize: 20.0, // Reduced icon size for the search icon
-                  onPressed: _onSearch,
-          ),
-                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
               ),
             ),
           ),
         ),
-          ),
-
-        ),
       ),
       drawer: const LeftDrawer(),
       body: SingleChildScrollView(
-        // Widget wrapper yang dapat discroll
         child: Padding(
-          padding: const EdgeInsets.all(10.0), // Set padding dari halaman
+          padding: const EdgeInsets.all(10.0),
           child: Column(
-            // Widget untuk menampilkan children secara vertikal
             children: <Widget>[
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                // Widget Text untuk menampilkan tulisan dengan alignment center dan style yang sesuai
                 child: Text(
-                  'GEDE-Books (Placeholder)', // Text yang menandakan toko
+                  'GEDE-Books',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(102, 37, 73, 1.0)
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(102, 37, 73, 1.0),
                   ),
                 ),
               ),
-              // Grid layout
-              GridView.count(
-                // Container pada card kita.
-                primary: true,
-                padding: const EdgeInsets.all(20),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                crossAxisCount: 3,
-                shrinkWrap: true,
-              ),
+              for (var section in ['Featured', 'Adventure Books'])
+                Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            section,
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              'Lihat Semua',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: 200,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: books.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            width: 150,
+                            child: Card(
+                              child: Wrap(
+                                children: <Widget>[
+                                  Image.asset(books[index].imagePath,
+                                  height: bookHeight,
+                                  ),
+                                  ListTile(
+                                    title: Text(books[index].title),
+                                    subtitle: Text('Rp. ${books[index].price},-'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-class ShopCard extends StatelessWidget {
-  final ShopItem item;
-
-  const ShopCard(this.item, {super.key}); // Constructor
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-
-    );
+  void _onSearch() {
+    // Define what happens when the search icon is tapped.
   }
 }
