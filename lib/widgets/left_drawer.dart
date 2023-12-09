@@ -59,6 +59,18 @@ class LeftDrawer extends StatelessWidget {
               ),
             ),
           ),
+          ListTile(
+            leading: Icon(Icons.home_outlined),
+            title: Text('Halaman Utama'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyHomePage(),
+                ),
+              );
+            },
+          ),
           ExpansionTile(
             leading: Icon(Icons.shelves),
             title: Text('Kategori'),
@@ -113,18 +125,6 @@ class LeftDrawer extends StatelessWidget {
               ),
               // Tambahkan lebih banyak ListTile di sini untuk kategori lain
             ],
-          ),
-          ListTile(
-            leading: Icon(Icons.home_outlined),
-            title: Text('Halaman Utama'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyHomePage(),
-                ),
-              );
-            },
           ),
           ListTile(
             leading: Icon(Icons.shopping_cart_outlined),
