@@ -126,6 +126,12 @@ class MyHomePage extends StatelessWidget {
               _buildSection('Adventure Books', adventureBooks),
               SizedBox(height: 20), // Jarak antar section
               _buildSection('Children Books', childrenBooks),
+              SizedBox(height: 20), // Jarak antar section
+              _buildSection('Movie Books', childrenBooks),
+              SizedBox(height: 20), // Jarak antar section
+              _buildSection('Historical Fiction', childrenBooks),
+              SizedBox(height: 20), // Jarak antar section
+              _buildSection('Science Fiction', childrenBooks),
             ],
           ),
         ),
@@ -135,20 +141,36 @@ class MyHomePage extends StatelessWidget {
 
 Widget _buildSection(String sectionTitle, List<Book> books) {
   return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0),
-        child: Text(
-          sectionTitle,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              sectionTitle,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
+              },
+              child: Text(
+                'Lihat Semua',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue[900],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       Container(
-        height: 262, // Tinggi container disesuaikan dengan kebutuhan
+        height: 265, // Tinggi container disesuaikan dengan kebutuhan
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: books.length,
@@ -174,7 +196,7 @@ Widget _buildSection(String sectionTitle, List<Book> books) {
                           ),
                         ],
                       ),
-                      SizedBox(height: 8), // Jarak antara teks judul dan harga
+                      SizedBox(height: 10), // Jarak antara teks judul dan harga
                       Padding(
                         padding: const EdgeInsets.only(left: 5),
                         child: Text(
