@@ -1,6 +1,5 @@
 import 'package:gede_books/screens/menu.dart';
 import 'package:gede_books/screens/register.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +16,7 @@ class LoginApp extends StatelessWidget {
     return MaterialApp(
       title: 'Login',
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
+        primarySwatch: Colors.blue,
       ),
       home: const LoginPage(),
     );
@@ -28,10 +27,10 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -68,7 +67,6 @@ class _LoginPageState extends State<LoginPage> {
                 String password = _passwordController.text;
 
                 // Cek kredensial
-                // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
                 // Untuk menyambungkan Android emulator dengan Django pada localhost,
                 // gunakan URL http://10.0.2.2/
                 final response = await request.login("https://gedebooks-a07-tk.pbp.cs.ui.ac.id/auth/login/", {
@@ -79,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                 if (request.loggedIn) {
                   String message = response['message'];
                   String uname = response['username'];
+                  if (!context.mounted) return;
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => MyHomePage()),
@@ -88,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                     ..showSnackBar(
                         SnackBar(content: Text("$message Selamat datang, $uname.")));
                 } else {
+                  if (!context.mounted) return;
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -109,23 +109,14 @@ class _LoginPageState extends State<LoginPage> {
               child: const Text('Login'),
             ),
             const SizedBox(height: 12.0),
-            RichText(
-              text: TextSpan(
-                text: 'Belum Memiliki Akun? ',
-                style: const TextStyle(color: Colors.black),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: ' Buat Akun',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterPage()),
-                      ),
-                  ),
-                ],
-              ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RegisterPage()),
+                );
+              },
+              child: const Text('Register'),
             ),
           ],
         ),

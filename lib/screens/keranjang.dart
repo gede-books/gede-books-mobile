@@ -12,13 +12,14 @@ class KeranjangPage extends StatelessWidget {
   KeranjangPage({Key? key}) : super(key: key);
 
   final List<ShopItem> items = [
-
+    ShopItem('Book 1', Icons.book),
+    ShopItem('Book 2', Icons.book),
+    // Add more items as needed
   ];
 
   void _onSearch() {
     // Define what happens when the search icon is tapped.
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -60,70 +61,64 @@ class KeranjangPage extends StatelessWidget {
           child: Container(
             height: 70.0,
             child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            child: TextField(
-              style: TextStyle(
-                fontSize: 14.0, // Smaller font size for the search bar text
-              ),
-              decoration: InputDecoration(
-                hintText: 'Mau cari buku apa hari ini?',
-                hintStyle: TextStyle(
-                  fontSize: 14.0, // Matching font size for the hint
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                child: TextField(
+                  style: TextStyle(
+                    fontSize: 14.0,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Mau cari buku apa hari ini?',
+                    hintStyle: TextStyle(
+                      fontSize: 14.0,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search, color: Colors.grey[600]),
+                      iconSize: 20.0,
+                      onPressed: _onSearch,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
                 ),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search, color: Colors.grey[600]),
-                  iconSize: 20.0, // Reduced icon size for the search icon
-                  onPressed: _onSearch,
-          ),
-                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
               ),
             ),
           ),
         ),
-          ),
-
-        ),
       ),
+
       drawer: const LeftDrawer(),
-      body: SingleChildScrollView(
-        // Widget wrapper yang dapat discroll
-        child: Padding(
-          padding: const EdgeInsets.all(10.0), // Set padding dari halaman
-          child: Column(
-            // Widget untuk menampilkan children secara vertikal
-            children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                // Widget Text untuk menampilkan tulisan dengan alignment center dan style yang sesuai
-                child: Text(
-                  'Keranjang Anda', // Text yang menandakan toko
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(102, 37, 73, 1.0)
-                  ),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            const Padding(
+              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+              child: Text(
+                'Keranjang Anda',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(102, 37, 73, 1.0),
                 ),
               ),
-              // Grid layout
-              GridView.count(
-                // Container pada card kita.
-                primary: true,
-                padding: const EdgeInsets.all(20),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                crossAxisCount: 3,
-                shrinkWrap: true,
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ShopCard(items[index]);
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -133,11 +128,34 @@ class KeranjangPage extends StatelessWidget {
 class ShopCard extends StatelessWidget {
   final ShopItem item;
 
-  const ShopCard(this.item, {super.key}); // Constructor
+  const ShopCard(this.item, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return Card(
+      elevation: 5,
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: ListTile(
+        leading: Image.asset(
+          'assets/buku1.jpg', // Ganti dengan nama file gambar yang sesuai
+          width: 50,
+          height: 50,
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(item.name),
+            Text(
+              'Rp. 50.000', // Ganti dengan harga buku sesuai kebutuhan
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+          ],
+        ),
+        // Add more ListTile properties as needed
+      ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:gede_books/screens/menu.dart';
 import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/screens/wishlist.dart';
 import 'package:gede_books/screens/order_history.dart';
+import 'package:gede_books/screens/login.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -166,7 +167,12 @@ class LeftDrawer extends StatelessWidget {
             leading: Icon(Icons.person_outline),
             title: Text('Login'),
             onTap: () {
-              // Aksi ketika 'Login' dipilih
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                  builder: (context) => LoginPage(),
+                  ),
+              );
             },
           ),
         ],
