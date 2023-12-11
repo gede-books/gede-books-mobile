@@ -39,13 +39,43 @@ class LoginPageState extends State<LoginPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        backgroundColor: Colors.grey[850],
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/GEDE-Books Logo.png',
+                width: 30,
+                height: 30,
+              ),
+              SizedBox(width: 8),
+              Text(
+                'GEDE-Books',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        elevation: 500,
       ),
       body: Container(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+                "Login",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                )
+            ),
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(
