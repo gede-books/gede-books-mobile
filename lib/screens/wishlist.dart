@@ -12,13 +12,14 @@ class WishlistPage extends StatelessWidget {
   WishlistPage({Key? key}) : super(key: key);
 
   final List<ShopItem> items = [
-
+    ShopItem('Book 1', Icons.book),
+    ShopItem('Book 2', Icons.book),
+    // Add more items as needed
   ];
 
   void _onSearch() {
     // Define what happens when the search icon is tapped.
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -60,36 +61,47 @@ class WishlistPage extends StatelessWidget {
           child: Container(
             height: 70.0,
             child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            child: TextField(
-              style: TextStyle(
-                fontSize: 14.0, // Smaller font size for the search bar text
-              ),
-              decoration: InputDecoration(
-                hintText: 'Mau cari buku apa hari ini?',
-                hintStyle: TextStyle(
-                  fontSize: 14.0, // Matching font size for the hint
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                child: TextField(
+                  style: TextStyle(
+                    fontSize: 14.0, // Smaller font size for the search bar text
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Mau cari buku apa hari ini?',
+                    hintStyle: TextStyle(
+                      fontSize: 14.0, // Matching font size for the hint
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search, color: Colors.grey[600]),
+                      iconSize: 20.0, // Reduced icon size for the search icon
+                      onPressed: _onSearch,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 0.0, horizontal: 16.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
                 ),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search, color: Colors.grey[600]),
-                  iconSize: 20.0, // Reduced icon size for the search icon
-                  onPressed: _onSearch,
-          ),
-                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
               ),
             ),
           ),
         ),
-          ),
-
+      ),
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 8.0,
+          mainAxisSpacing: 8.0,
         ),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return ShopCard(items[index]);
+        },
       ),
     );
   }
@@ -98,11 +110,19 @@ class WishlistPage extends StatelessWidget {
 class ShopCard extends StatelessWidget {
   final ShopItem item;
 
-  const ShopCard(this.item, {super.key}); // Constructor
+  ShopCard(this.item, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return Card(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(item.icon, size: 50),
+          SizedBox(height: 8),
+          Text(item.name),
+        ],
+      ),
     );
   }
 }
