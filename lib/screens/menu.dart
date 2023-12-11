@@ -19,25 +19,25 @@ class MyHomePage extends StatelessWidget {
 
   // Daftar buku untuk kategori 'Featured'
   final List<Book> featuredBooks = [
-    Book("Through the Looking-Glass", "Lewis Caroll", "assets/buku/1-25/buku8.jpg", 225000),
-    Book("Moby-Dick; or, The Whales", "Herman Melville", "assets/buku/1-25/buku10.jpg", 150000),
-    Book("Herland", "Charlotte Perkins Gilman", "assets/buku/1-25/buku18.jpg", 180000),
-    Book("A Princess of Mars", "Edgar Rice Burroughs", "assets/buku/26-50/buku33.jpg", 200000),
-    Book("The Red Badge of Courage: An Episode of the American Civil War", "Stephen Crane", "assets/buku/26-50/buku39.jpg", 250000),
+    Book("Through the Looking-Glass", "Lewis Caroll", "assets/buku/buku8.jpg", 225000),
+    Book("Moby-Dick; or, The Whales", "Herman Melville", "assets/buku/buku10.jpg", 150000),
+    Book("Herland", "Charlotte Perkins Gilman", "assets/buku/buku18.jpg", 180000),
+    Book("A Princess of Mars", "Edgar Rice Burroughs", "assets/buku/buku33.jpg", 200000),
+    Book("The Red Badge of Courage: An Episode of the American Civil War", "Stephen Crane", "assets/buku/buku39.jpg", 250000),
     // Tambahkan lebih banyak buku di sini
   ];
 
   // Daftar buku untuk kategori 'Adventure Books'
   final List<Book> adventureBooks = [
-    Book("The Declaration of Independence of the United States", "Thomas Jefferson", "assets/buku/1-25/buku1.jpg", 300000),
-    Book("Alice’s Adventure in Wonderland", "Lewis Carroll", "assets/buku/1-25/buku7.jpg", 175000),
+    Book("The Declaration of Independence of the United States", "Thomas Jefferson", "assets/buku/buku1.jpg", 300000),
+    Book("Alice’s Adventure in Wonderland", "Lewis Carroll", "assets/buku/buku7.jpg", 175000),
     // Tambahkan lebih banyak buku di sini
   ];
 
   // Daftar buku untuk kategori 'Children Books'
   final List<Book> childrenBooks = [
-    Book("The Declaration of Independence of the United States", "Thomas Jefferson", "assets/buku/1-25/buku1.jpg", 300000),
-    Book("Alice’s Adventure in Wonderland", "Lewis Carroll", "assets/buku/1-25/buku7.jpg", 175000),
+    Book("The Declaration of Independence of the United States", "Thomas Jefferson", "assets/buku/buku1.jpg", 300000),
+    Book("Alice’s Adventure in Wonderland", "Lewis Carroll", "assets/buku/buku7.jpg", 175000),
     // Tambahkan lebih banyak buku di sini
   ];
 
