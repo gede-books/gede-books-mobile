@@ -77,6 +77,18 @@ class LeftDrawer extends StatelessWidget {
             title: Text('Kategori'),
             children: <Widget>[
               ListTile(
+                title: Text(
+                  '    Lihat Semua Buku',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold, // Mengatur teks menjadi italic
+                    color: Colors.blue[900], // Mengatur warna teks
+                  ),
+                ),
+                onTap: () {
+                  // Jika ingin melihat seluruh koleksi buku
+                },
+              ),
+              ListTile(
                 title: const Text('     Adventure'),
                 onTap: () {
                   // Aksi ketika 'Adventure' dipilih
@@ -89,15 +101,21 @@ class LeftDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: const Text('     Horror'),
+                title: const Text('     Harvard Classics'),
                 onTap: () {
-                  // Aksi ketika 'Horror' dipilih
+                  // Aksi ketika 'Harvard Classics' dipilih
                 },
               ),
               ListTile(
-                title: const Text('     Humorous'),
+                title: const Text('     Historical Fiction'),
                 onTap: () {
-                  // Aksi ketika 'Humorous' dipilih
+                  // Aksi ketika 'Historical Fiction' dipilih
+                },
+              ),
+              ListTile(
+                title: const Text('     Horror'),
+                onTap: () {
+                  // Aksi ketika 'Horror' dipilih
                 },
               ),
               ListTile(
@@ -113,13 +131,7 @@ class LeftDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: const Text('     Politics'),
-                onTap: () {
-                  // Aksi ketika 'Politics' dipilih
-                },
-              ),
-              ListTile(
-                title: const Text('     Sci-Fi'),
+                title: const Text('     Science Fiction'),
                 onTap: () {
                   // Aksi ketika 'Sci-Fi' dipilih
                 },

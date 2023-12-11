@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 class Book {
   final String title;
@@ -14,13 +15,15 @@ class Book {
 class MyHomePage extends StatelessWidget {
   MyHomePage({Key? key}) : super(key: key);
 
-  final double bookHeight = 50.0; // Tinggi tetap buku
+  final double bookHeight = 110.0; // Tinggi tetap buku
 
   // Daftar buku untuk kategori 'Featured'
   final List<Book> featuredBooks = [
-    Book("The Declaration of Independence of the United States", "Thomas Jefferson", "assets/buku/1-25/buku1.jpg", 300000),
-    Book("John F. Kennedy's Inaugural Address", "John F. (John Fitzgerald) Kennedy", "assets/buku/1-25/buku2.jpg", 250000),
-    Book("Lincoln's Gettysburg Address Given November 19, 1863 on the battlefield near Gettysburg, Pennsylvania, USA", "Abraham Lincoln", "assets/buku/1-25/buku3.jpg", 175000),
+    Book("Through the Looking-Glass", "Lewis Caroll", "assets/buku/1-25/buku8.jpg", 225000),
+    Book("Moby-Dick; or, The Whales", "Herman Melville", "assets/buku/1-25/buku10.jpg", 150000),
+    Book("Herland", "Charlotte Perkins Gilman", "assets/buku/1-25/buku18.jpg", 180000),
+    Book("A Princess of Mars", "Edgar Rice Burroughs", "assets/buku/26-50/buku33.jpg", 200000),
+    Book("The Red Badge of Courage: An Episode of the American Civil War", "Stephen Crane", "assets/buku/26-50/buku39.jpg", 250000),
     // Tambahkan lebih banyak buku di sini
   ];
 
@@ -117,14 +120,20 @@ class MyHomePage extends StatelessWidget {
       drawer: const LeftDrawer(),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: Column(
             children: <Widget>[
-              _buildSection('Featured', featuredBooks),
+              _buildSectionFeatured('Featured', featuredBooks),
               SizedBox(height: 20), // Jarak antar section
               _buildSection('Adventure Books', adventureBooks),
               SizedBox(height: 20), // Jarak antar section
               _buildSection('Children Books', childrenBooks),
+              SizedBox(height: 20), // Jarak antar section
+              _buildSection('Movie Books', childrenBooks),
+              SizedBox(height: 20), // Jarak antar section
+              _buildSection('Historical Fiction', childrenBooks),
+              SizedBox(height: 20), // Jarak antar section
+              _buildSection('Science Fiction', childrenBooks),
             ],
           ),
         ),
@@ -132,35 +141,168 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-    Widget _buildSection(String sectionTitle, List<Book> books) {
+  Widget _buildSectionFeatured(String sectionTitle, List<Book> books) {
+    return Container(
+      color: Color.fromARGB(255, 45, 94, 167),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 8.0), // Padding kiri untuk kategori buku
+                  child: Text(
+                    sectionTitle,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: 5.0), // Padding kanan untuk container
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
+                      },
+                      child: Text(
+                        'Lihat Semua',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.blue[900],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: 265, // Tinggi container disesuaikan dengan kebutuhan
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: books.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  width: 150,
+                  child: Card(
+                    margin: EdgeInsets.all(5),
+                    child: ClipRRect( // Menggunakan ClipRRect untuk membuat Card menjadi rounded
+                      borderRadius: BorderRadius.circular(12.0), // Atur radius sesuai keinginan
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start, // Teks rata kiri
+                        children: <Widget>[
+                          Stack(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: bookHeight,
+                                color: Colors.grey, // Warna abu-abu di samping gambar buku
+                              ),
+                              Center( // Menempatkan gambar di tengah secara horizontal
+                                child: Image.asset(books[index].imagePath, height: bookHeight),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10), // Jarak antara teks judul dan harga
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Text(
+                              processAuthor(books[index].author),
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Color.fromARGB(255, 54, 51, 51),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          SizedBox(height: 5), // Jarak antara gambar buku dengan teks judul
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Text(
+                              processTitle(books[index].title),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          SizedBox(height: 5), // Jarak antara teks judul dan harga
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Text(
+                              'Rp. ${books[index].price},-',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.blue[900],
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildSection(String sectionTitle, List<Book> books) {
     return Column(
       children: [
         Padding(
           padding: EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              sectionTitle,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'Lihat Semua',
-                style: TextStyle(
-                  fontSize: 16,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 8.0), // Padding kiri untuk kategori buku
+                child: Text(
+                  sectionTitle,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.only(right: 0.0), // Padding kanan untuk tombol "Lihat Semua"
+                child: TextButton(
+                  onPressed: () {
+                    // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
+                  },
+                  child: Text(
+                    'Lihat Semua',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blue[900],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         Container(
-          height: 200,
+          height: 265, // Tinggi container disesuaikan dengan kebutuhan
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: books.length,
@@ -169,35 +311,59 @@ class MyHomePage extends StatelessWidget {
                 width: 150,
                 child: Card(
                   margin: EdgeInsets.all(5),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Wrap(
+                  child: ClipRRect( // Menggunakan ClipRRect untuk membuat Card menjadi rounded
+                    borderRadius: BorderRadius.circular(12.0), // Atur radius sesuai keinginan
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start, // Teks rata kiri
                       children: <Widget>[
-                        Image.asset(books[index].imagePath, height: bookHeight),
-                        ListTile(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 2.0),
-                          title: Text(
+                        Stack(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: bookHeight,
+                              color: const Color.fromARGB(255, 65, 65, 65), // Warna abu-abu di samping gambar buku
+                            ),
+                            Center( // Menempatkan gambar di tengah secara horizontal
+                              child: Image.asset(books[index].imagePath, height: bookHeight),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10), // Jarak antara teks judul dan harga
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(
+                            processAuthor(books[index].author),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Color.fromARGB(255, 54, 51, 51),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        SizedBox(height: 5), // Jarak antara gambar buku dengan teks judul
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(
                             processTitle(books[index].title),
                             style: TextStyle(
-                              fontFamily: 'PlusJakartaSans',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
                             ),
+                            textAlign: TextAlign.left,
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 4),
-                              Text(
-                                'Rp. ${books[index].price},-',
-                                style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue[900],
-                                ),
-                              ),
-                            ],
+                        ),
+                        SizedBox(height: 5), // Jarak antara teks judul dan harga
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(
+                            'Rp. ${books[index].price},-',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.blue[900],
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
                         ),
                       ],
@@ -212,10 +378,19 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
+
   String processTitle(String title) {
     var words = title.split(' ');
     if (words.length > 10) {
-      return words.take(10).join(' ') + '...';
+      return words.take(10).join(' ') + ' ...';
+    }
+    return title;
+  }
+
+  String processAuthor(String title) {
+    var words = title.split(' ');
+    if (words.length > 3) {
+      return words.take(3).join(' ') + ' ...';
     }
     return title;
   }
