@@ -3,6 +3,7 @@ import 'package:gede_books/screens/menu.dart';
 import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/screens/wishlist.dart';
 import 'package:gede_books/screens/order_history.dart';
+import 'package:gede_books/screens/login.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -58,6 +59,18 @@ class LeftDrawer extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+          ListTile(
+            leading: Icon(Icons.home_outlined),
+            title: Text('Halaman Utama'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyHomePage(),
+                ),
+              );
+            },
           ),
           ExpansionTile(
             leading: Icon(Icons.shelves),
@@ -115,18 +128,6 @@ class LeftDrawer extends StatelessWidget {
             ],
           ),
           ListTile(
-            leading: Icon(Icons.home_outlined),
-            title: Text('Halaman Utama'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyHomePage(),
-                ),
-              );
-            },
-          ),
-          ListTile(
             leading: Icon(Icons.shopping_cart_outlined),
             title: Text('Keranjang Saya'),
             onTap: () {
@@ -166,7 +167,12 @@ class LeftDrawer extends StatelessWidget {
             leading: Icon(Icons.person_outline),
             title: Text('Login'),
             onTap: () {
-              // Aksi ketika 'Login' dipilih
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                  builder: (context) => LoginPage(),
+                  ),
+              );
             },
           ),
         ],
