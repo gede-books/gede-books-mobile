@@ -52,11 +52,11 @@ class _RegisterPageState extends State<RegisterPage> {
           children: [
             Text(
                 "Register",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-              )
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                )
             ),
             TextField(
               controller: _usernameController,

@@ -48,40 +48,19 @@ class KeranjangPage extends StatelessWidget {
           ),
         ),
         elevation: 500,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60.0),
-          child: Container(
-            height: 70.0,
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.0),
-                child: TextField(
-                  style: TextStyle(
-                    fontSize: 14.0,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Mau cari buku apa hari ini?',
-                    hintStyle: TextStyle(
-                      fontSize: 14.0,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.search, color: Colors.grey[600]),
-                      iconSize: 20.0,
-                      onPressed: _onSearch,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => KeranjangPage(),
                 ),
-              ),
-            ),
+              );
+            },
           ),
-        ),
+        ],
       ),
 
       drawer: const LeftDrawer(),
@@ -129,7 +108,7 @@ class ShopCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 10),
       child: ListTile(
         leading: Image.asset(
-          'assets/buku1.jpg', // Ganti dengan nama file gambar yang sesuai
+          'assets/buku/1-25/buku1.jpg', // Ganti dengan nama file gambar yang sesuai
           width: 50,
           height: 50,
         ),
