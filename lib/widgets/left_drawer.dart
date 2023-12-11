@@ -4,12 +4,16 @@ import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/screens/wishlist.dart';
 import 'package:gede_books/screens/order_history.dart';
 import 'package:gede_books/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Drawer(
       child: ListView( // Menggunakan ListView untuk memungkinkan item-itemnya scrollable
         children: <Widget>[
@@ -59,6 +63,23 @@ class LeftDrawer extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+          FutureBuilder<String?>(
+            future: _getStoredUsername(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListTile(
+                  title: Text(
+                      'Welcome, ${snapshot.data}!',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              } else {
+                return Container(); // Handle loading or errors
+              }
+            },
           ),
           ListTile(
             leading: Icon(Icons.home_outlined),
@@ -175,20 +196,62 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
-          ListTile(
-            leading: Icon(Icons.person_outline),
-            title: Text('Login'),
-            onTap: () {
-              Navigator.push(
+          if (!request.loggedIn)
+            ListTile(
+              leading: Icon(Icons.person_outline),
+              title: Text('Login'),
+              onTap: () {
+                Navigator.push(
                   context,
-                  MaterialPageRoute(
-                  builder: (context) => LoginPage(),
-                  ),
-              );
-            },
-          ),
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
+            ),
+          if (request.loggedIn)
+            ListTile(
+              leading: Icon(
+                Icons.person_outline,
+                color: Colors.red,
+              ),
+              title: Text(
+                'Logout',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              onTap: () async {
+
+                final response = await request.logout("https://gedebooks-a07-tk.pbp.cs.ui.ac.id/auth/logout/");
+                String message = response["message"];
+
+                if (response['status']) {
+                  String uname = response["username"];
+                  await _clearStoredUsername();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("$message Sampai jumpa, $uname."),
+                  ));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyHomePage()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("$message"),
+                  ));
+                }
+              },
+            ),
         ],
       ),
     );
+  }
+  Future<void> _clearStoredUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+  }
+
+  Future<String?> _getStoredUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username');
   }
 }
