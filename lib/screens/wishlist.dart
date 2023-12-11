@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
+import 'package:gede_books/screens/keranjang.dart';
 
 class ShopItem {
   final String name;
@@ -51,7 +52,12 @@ class WishlistPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Handle shopping cart action
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => KeranjangPage(),
+                ),
+              );
             },
           ),
         ],

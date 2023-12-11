@@ -48,14 +48,6 @@ class KeranjangPage extends StatelessWidget {
           ),
         ),
         elevation: 500,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              // Handle shopping cart action
-            },
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(60.0),
           child: Container(

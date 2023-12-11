@@ -69,7 +69,12 @@ class MyHomePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Handle shopping cart action
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => KeranjangPage(),
+                ),
+              );
             },
           ),
         ],
