@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
+import 'package:gede_books/models/product.dart'; // Pastikan path ini benar
+
+import 'package:http/http.dart' as http;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 class Book {
@@ -12,38 +15,50 @@ class Book {
   Book(this.title, this.author, this.imagePath, this.price);
 }
 
-class MyHomePage extends StatelessWidget {
+Future<List<Book>> fetchBooks(String category) async {
+  final response = await http.get(Uri.parse('https://gedebooks-a07-tk.pbp.cs.ui.ac.id/json/'));
+
+  if (response.statusCode == 200) {
+    List<Product> products = productFromJson(response.body);
+    return products
+        .where((product) => product.fields.category.contains(category))
+        .take(5) // Batasi hanya 5 buku
+        .map((product) => Book(
+          product.fields.title,
+          '${firstNameValues.reverse[product.fields.firstName]} ${lastNameValues.reverse[product.fields.lastName]}',
+          'assets/buku/buku${product.pk}.jpg',
+          product.fields.price.toInt(),
+        ))
+        .toList();
+  } else {
+    throw Exception('Failed to load books');
+  }
+}
+
+class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key}) : super(key: key);
 
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  late Future<List<Book>> featuredBooks;
+  late Future<List<Book>> adventureBooks;
+  late Future<List<Book>> childrenBooks;
   final double bookHeight = 110.0; // Tinggi tetap buku
 
-  // Daftar buku untuk kategori 'Featured'
-  final List<Book> featuredBooks = [
-    Book("Through the Looking-Glass", "Lewis Caroll", "assets/buku/buku8.jpg", 225000),
-    Book("Moby-Dick; or, The Whales", "Herman Melville", "assets/buku/buku10.jpg", 150000),
-    Book("Herland", "Charlotte Perkins Gilman", "assets/buku/buku18.jpg", 180000),
-    Book("A Princess of Mars", "Edgar Rice Burroughs", "assets/buku/buku33.jpg", 200000),
-    Book("The Red Badge of Courage: An Episode of the American Civil War", "Stephen Crane", "assets/buku/buku39.jpg", 250000),
-    // Tambahkan lebih banyak buku di sini
-  ];
-
-  // Daftar buku untuk kategori 'Adventure Books'
-  final List<Book> adventureBooks = [
-    Book("The Declaration of Independence of the United States", "Thomas Jefferson", "assets/buku/buku1.jpg", 300000),
-    Book("Alice’s Adventure in Wonderland", "Lewis Carroll", "assets/buku/buku7.jpg", 175000),
-    // Tambahkan lebih banyak buku di sini
-  ];
-
-  // Daftar buku untuk kategori 'Children Books'
-  final List<Book> childrenBooks = [
-    Book("The Declaration of Independence of the United States", "Thomas Jefferson", "assets/buku/buku1.jpg", 300000),
-    Book("Alice’s Adventure in Wonderland", "Lewis Carroll", "assets/buku/buku7.jpg", 175000),
-    // Tambahkan lebih banyak buku di sini
-  ];
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  void initState() {
+    super.initState();
+    featuredBooks = fetchBooks('Adventure');
+    adventureBooks = fetchBooks('Adventure');
+    childrenBooks = fetchBooks('Children'); // Contoh lain
+  }
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         iconTheme: IconThemeData(color: Colors.white),
@@ -72,12 +87,7 @@ class MyHomePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => KeranjangPage(),
-                ),
-              );
+              // Handle shopping cart action
             },
           ),
         ],
@@ -116,30 +126,54 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
       ),
-
-      drawer: const LeftDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Column(
-            children: <Widget>[
-              _buildSectionFeatured('Featured', featuredBooks),
-              SizedBox(height: 20), // Jarak antar section
-              _buildSection('Adventure Books', adventureBooks),
-              SizedBox(height: 20), // Jarak antar section
-              _buildSection('Children Books', childrenBooks),
-              SizedBox(height: 20), // Jarak antar section
-              _buildSection('Movie Books', childrenBooks),
-              SizedBox(height: 20), // Jarak antar section
-              _buildSection('Historical Fiction', childrenBooks),
-              SizedBox(height: 20), // Jarak antar section
-              _buildSection('Science Fiction', childrenBooks),
-            ],
-          ),
+    drawer: const LeftDrawer(),
+    body: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Column(
+          children: <Widget>[
+            FutureBuilder<List<Book>>(
+              future: featuredBooks,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else if (snapshot.hasData) {
+                  return _buildSectionFeatured('Featured', snapshot.data!);
+                } else {
+                  return Text("No data available");
+                }
+              },
+            ),
+            SizedBox(height: 20),
+            buildBookSection('Adventure Books', adventureBooks),
+            SizedBox(height: 20),
+            buildBookSection('Children Books', childrenBooks),
+            // Tambahkan lebih banyak FutureBuilder untuk kategori buku lainnya sesuai kebutuhan
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
+  return FutureBuilder<List<Book>>(
+    future: booksFuture,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return CircularProgressIndicator();
+      } else if (snapshot.hasError) {
+        return Text("Error: ${snapshot.error}");
+      } else if (snapshot.hasData) {
+        return _buildSection(sectionTitle, snapshot.data!);
+      } else {
+        return Text("No data available");
+      }
+    },
+  );
+}
 
   Widget _buildSectionFeatured(String sectionTitle, List<Book> books) {
     return Container(

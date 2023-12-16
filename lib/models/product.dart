@@ -43,7 +43,7 @@ class Fields {
     String category;
     int stock;
     int price;
-    int rating;
+    double rating;
 
     Fields({
         required this.bookCode,
@@ -69,7 +69,7 @@ class Fields {
         subjects: json["subjects"],
         category: json["category"],
         stock: json["stock"],
-        price: json["price"],
+        price: (json["price"] as num).toInt(),
         rating: json["rating"],
     );
 

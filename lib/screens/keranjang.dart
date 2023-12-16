@@ -129,7 +129,7 @@ class ShopCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 10),
       child: ListTile(
         leading: Image.asset(
-          'assets/buku1.jpg', // Ganti dengan nama file gambar yang sesuai
+          'assets/buku/buku1.jpg', // Ganti dengan nama file gambar yang sesuai
           width: 50,
           height: 50,
         ),
