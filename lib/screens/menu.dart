@@ -20,16 +20,28 @@ Future<List<Book>> fetchBooks(String category) async {
 
   if (response.statusCode == 200) {
     List<Product> products = productFromJson(response.body);
-    return products
-        .where((product) => product.fields.category.contains(category))
-        .take(5) // Batasi hanya 5 buku
-        .map((product) => Book(
+    List<Book> books = [];
+    int booksTaken = 0; // Menghitung jumlah buku yang sudah diambil
+
+    for (final product in products) {
+      if (booksTaken >= 5) {
+        break; // Jika sudah mengambil 100 buku, keluar dari loop
+      }
+
+      if (product.fields.category.contains(category) &&
+          product.pk != 238 && product.pk != 106) {
+        final book = Book(
           product.fields.title,
           '${firstNameValues.reverse[product.fields.firstName]} ${lastNameValues.reverse[product.fields.lastName]}',
           'assets/buku/buku${product.pk}.jpg',
-          product.fields.price.toInt(),
-        ))
-        .toList();
+          product.fields.price,
+        );
+        books.add(book);
+        booksTaken++;
+      }
+    }
+
+    return books;
   } else {
     throw Exception('Failed to load books');
   }
@@ -46,14 +58,20 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<Book>> featuredBooks;
   late Future<List<Book>> adventureBooks;
   late Future<List<Book>> childrenBooks;
+  late Future<List<Book>> movieBooks;
+  late Future<List<Book>> historicalFiction;
+  late Future<List<Book>> scienceFiction;
   final double bookHeight = 110.0; // Tinggi tetap buku
 
   @override
   void initState() {
     super.initState();
-    featuredBooks = fetchBooks('Adventure');
+    featuredBooks = fetchBooks('Best');
     adventureBooks = fetchBooks('Adventure');
-    childrenBooks = fetchBooks('Children'); // Contoh lain
+    childrenBooks = fetchBooks('Children');
+    movieBooks = fetchBooks('Movie');
+    historicalFiction = fetchBooks('Historical');
+    scienceFiction = fetchBooks('Sci');
   }
 
 @override
@@ -132,29 +150,38 @@ Widget build(BuildContext context) {
         padding: const EdgeInsets.only(top: 10.0),
         child: Column(
           children: <Widget>[
-            FutureBuilder<List<Book>>(
-              future: featuredBooks,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
-                } else if (snapshot.hasData) {
-                  return _buildSectionFeatured('Featured', snapshot.data!);
-                } else {
-                  return Text("No data available");
-                }
-              },
-            ),
+            buildFeaturedBookSection('Featured Books', featuredBooks),
             SizedBox(height: 20),
             buildBookSection('Adventure Books', adventureBooks),
             SizedBox(height: 20),
             buildBookSection('Children Books', childrenBooks),
-            // Tambahkan lebih banyak FutureBuilder untuk kategori buku lainnya sesuai kebutuhan
+            SizedBox(height: 20),
+            buildBookSection('Movie Books', movieBooks),
+            SizedBox(height: 20),
+            buildBookSection('Historical Fiction', historicalFiction),
+            SizedBox(height: 20),
+            buildBookSection('Science Fiction', scienceFiction),
           ],
         ),
       ),
     ),
+  );
+}
+
+Widget buildFeaturedBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
+  return FutureBuilder<List<Book>>(
+    future: booksFuture,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return CircularProgressIndicator();
+      } else if (snapshot.hasError) {
+        return Text("Error: ${snapshot.error}");
+      } else if (snapshot.hasData) {
+        return _buildSectionFeatured(sectionTitle, snapshot.data!);
+      } else {
+        return Text("No data available");
+      }
+    },
   );
 }
 
@@ -179,7 +206,7 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
     return Container(
       color: Color.fromARGB(255, 45, 94, 167),
       child: Column(
-        children: [
+      children: [
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10.0),
             child: Row(
@@ -220,69 +247,69 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
               ],
             ),
           ),
-          Container(
-            height: 265, // Tinggi container disesuaikan dengan kebutuhan
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: books.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  width: 150,
-                  child: Card(
-                    margin: EdgeInsets.all(5),
-                    child: ClipRRect( // Menggunakan ClipRRect untuk membuat Card menjadi rounded
-                      borderRadius: BorderRadius.circular(12.0), // Atur radius sesuai keinginan
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // Teks rata kiri
-                        children: <Widget>[
-                          Stack(
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                height: bookHeight,
-                                color: Colors.grey, // Warna abu-abu di samping gambar buku
-                              ),
-                              Center( // Menempatkan gambar di tengah secara horizontal
-                                child: Image.asset(books[index].imagePath, height: bookHeight),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10), // Jarak antara teks judul dan harga
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              processAuthor(books[index].author),
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Color.fromARGB(255, 54, 51, 51),
-                                fontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.left,
+        Container(
+          height: 265, // Tinggi container disesuaikan dengan kebutuhan
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: books.length,
+            itemBuilder: (context, index) {
+              return Container(
+                width: 150,
+                child: Card(
+                  margin: EdgeInsets.all(5),
+                  child: ClipRRect( // Menggunakan ClipRRect untuk membuat Card menjadi rounded
+                    borderRadius: BorderRadius.circular(12.0), // Atur radius sesuai keinginan
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start, // Teks rata kiri
+                      children: <Widget>[
+                        Stack(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: bookHeight,
+                              color: Colors.grey, // Warna abu-abu di samping gambar buku
                             ),
-                          ),
-                          SizedBox(height: 5), // Jarak antara gambar buku dengan teks judul
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              processTitle(books[index].title),
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.left,
+                            Center( // Menempatkan gambar di tengah secara horizontal
+                              child: Image.asset(books[index].imagePath, height: bookHeight),
                             ),
+                          ],
+                        ),
+                        SizedBox(height: 10), // Jarak antara teks judul dan harga
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(
+                            processAuthor(books[index].author),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Color.fromARGB(255, 54, 51, 51),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
-                          SizedBox(height: 5), // Jarak antara teks judul dan harga
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              'Rp. ${books[index].price},-',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.blue[900],
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.left,
+                        ),
+                        SizedBox(height: 5), // Jarak antara gambar buku dengan teks judul
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(
+                            processTitle(books[index].title),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        SizedBox(height: 5), // Jarak antara teks judul dan harga
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(
+                            'Rp. ${books[index].price},-',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.blue[900],
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.left,
                             ),
                           ),
                         ],
