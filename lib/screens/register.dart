@@ -1,39 +1,20 @@
-import 'package:gede_books/screens/menu.dart';
-import 'package:gede_books/screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'login.dart';
 
-void main() {
-  runApp(const LoginApp());
-}
-
-class LoginApp extends StatelessWidget {
-  const LoginApp({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Login',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const LoginPage(),
-    );
-  }
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
-  @override
-  LoginPageState createState() => LoginPageState();
-}
-
-class LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordConfirmationController =
+  TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +51,7 @@ class LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-                "Login",
+                "Register",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -91,43 +72,85 @@ class LoginPageState extends State<LoginPage> {
               ),
               obscureText: true,
             ),
+            const SizedBox(height: 12.0),
+            TextField(
+              controller: _passwordConfirmationController,
+              decoration: const InputDecoration(
+                labelText: 'Password Confirmation',
+              ),
+              obscureText: true,
+            ),
             const SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () async {
                 String username = _usernameController.text;
                 String password = _passwordController.text;
+                String passwordConfirmation =
+                    _passwordConfirmationController.text;
 
-                // Cek kredensial
-                // Untuk menyambungkan Android emulator dengan Django pada localhost,
-                // gunakan URL http://10.0.2.2/
-                final response = await request.login("https://gedebooks-a07-tk.pbp.cs.ui.ac.id/auth/login/", {
-                  'username': username,
-                  'password': password,
-                });
-
-                if (request.loggedIn) {
-                  String message = response['message'];
-                  String uname = response['username'];
-
-                  await _saveUsername(uname);
-
-                  if (!context.mounted) return;
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => MyHomePage()),
-                  );
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                        SnackBar(content: Text("$message Selamat datang, $uname.")));
-                } else {
-                  if (!context.mounted) return;
+                if (username.isEmpty ||
+                    password.isEmpty ||
+                    passwordConfirmation.isEmpty) {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Login Gagal'),
-                      content:
-                      Text(response['message']),
+                      title: const Text('Registrasi Gagal'),
+                      content: const Text(
+                          'Username, Password, dan Password Confirmation tidak boleh kosong.'),
+                      actions: [
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                  return;
+                }
+                if (password != passwordConfirmation) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Registrasi Gagal'),
+                      content: const Text(
+                          'Password dan Password Confirmation tidak sama.'),
+                      actions: [
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                  return;
+                }
+
+                final response = await request.post(
+                    "https://gedebooks-a07-tk.pbp.cs.ui.ac.id/auth/register/", {
+                  'username': username,
+                  'password1': password,
+                  'password2': passwordConfirmation,
+                });
+
+                if (response['status']) {
+                  String message = response['message'];
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(SnackBar(content: Text(message)));
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Registrasi Gagal'),
+                      content: Text(response['message']),
                       actions: [
                         TextButton(
                           child: const Text('OK'),
@@ -140,25 +163,11 @@ class LoginPageState extends State<LoginPage> {
                   );
                 }
               },
-              child: const Text('Login'),
-            ),
-            const SizedBox(height: 12.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RegisterPage()),
-                );
-              },
-              child: const Text('Register'),
+              child: const Text('Sign Up'),
             ),
           ],
         ),
       ),
     );
-  }
-  Future<void> _saveUsername(String username) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', username);
   }
 }

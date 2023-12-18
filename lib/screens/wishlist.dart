@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
+import 'package:gede_books/screens/keranjang.dart';
 
 class ShopItem {
   final String name;
@@ -55,7 +56,7 @@ class WishlistPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => WishlistPage(),
+                  builder: (context) => KeranjangPage(),
                 ),
               );
             },
@@ -108,7 +109,7 @@ class ShopCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 10),
       child: ListTile(
         leading: Image.asset(
-          'assets/buku/1-25/buku1.jpg', // Ganti dengan nama file gambar yang sesuai
+          'assets/buku/buku1.jpg', // Ganti dengan nama file gambar yang sesuai
           width: 50,
           height: 50,
         ),
