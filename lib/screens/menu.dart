@@ -21,7 +21,7 @@ class Book {
 }
 
 Future<List<Book>> fetchBooks(String category) async {
-  final response = await http.get(Uri.parse('https://gedebooks-a07-tk.pbp.cs.ui.ac.id/json/'));
+  final response = await http.get(Uri.parse('https://lidwina-eurora-gedebooks.stndar.dev/json/'));
 
   if (response.statusCode == 200) {
     List<Product> products = productFromJson(response.body);

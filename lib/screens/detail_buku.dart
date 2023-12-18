@@ -5,6 +5,7 @@ import 'package:gede_books/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class BookDetailPage extends StatefulWidget {
   final String title;
@@ -22,6 +23,22 @@ class BookDetailPage extends StatefulWidget {
   @override
   _BookDetailPageState createState() => _BookDetailPageState();
 }
+
+Future<void> tambahKeKeranjang() async {
+  final url = 'https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/';
+  final response = await http.post(Uri.parse(url), body: {
+    /*
+    TODO divi jangan lupa pass model
+     */
+  });
+
+  if (response.statusCode == 200) {
+    // TODO DIVI
+  } else {
+    // TODO DIVI
+  }
+}
+
 
 class _BookDetailPageState extends State<BookDetailPage> {
   bool isCartPressed = false;
@@ -111,9 +128,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 ElevatedButton(
                   onPressed: () {
                     if (request.loggedIn) {
-                      /*
-                    TODO: Tambahin logic untuk memasukkan ke keranjang disini
-                    */
+                      tambahKeKeranjang();
                     }
                     else if (!request.loggedIn) {
                       Navigator.push(
