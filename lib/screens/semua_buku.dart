@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gede_books/screens/keranjang.dart';
+import 'package:gede_books/models/product.dart';
 import 'package:gede_books/screens/detail_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
-import 'package:gede_books/models/product.dart';
-
 import 'package:http/http.dart' as http;
 
 class Book {
@@ -15,19 +13,14 @@ class Book {
   Book(this.title, this.author, this.imagePath, this.price);
 }
 
-Future<List<Book>> fetchBooks(String category) async {
-  final response = await http.get(Uri.parse('https://gedebooks-a07-tk.pbp.cs.ui.ac.id/json/'));
+Future<List<Book>> fetchBooks(String category, int page, int booksPerPage) async {
+  // URL mungkin perlu diubah untuk mendukung pagination
+  final response = await http.get(Uri.parse('https://gedebooks-a07-tk.pbp.cs.ui.ac.id/json/?page=$page'));
 
   if (response.statusCode == 200) {
     List<Product> products = productFromJson(response.body);
     List<Book> books = [];
-    int booksTaken = 0; // Menghitung jumlah buku yang sudah diambil
-
     for (final product in products) {
-      if (booksTaken >= 100) {
-        break; // Jika sudah mengambil 100 buku, keluar dari loop
-      }
-
       if (product.fields.category.contains(category) &&
           product.pk != 238 && product.pk != 106) {
         final book = Book(
@@ -37,16 +30,17 @@ Future<List<Book>> fetchBooks(String category) async {
           product.fields.price,
         );
         books.add(book);
-        booksTaken++;
       }
     }
 
-    return books;
+    // Mengambil sejumlah buku sesuai booksPerPage
+    int startIndex = (page - 1) * booksPerPage;
+    int endIndex = startIndex + booksPerPage;
+    return books.sublist(startIndex, endIndex <= books.length ? endIndex : books.length);
   } else {
     throw Exception('Failed to load books');
   }
 }
-
 
 class AllBookPage extends StatefulWidget {
   AllBookPage({Key? key}) : super(key: key);
@@ -57,17 +51,20 @@ class AllBookPage extends StatefulWidget {
 
 class _AllBookPageState extends State<AllBookPage> {
   late Future<List<Book>> allBooks;
+  int currentPage = 1;
+  final int booksPerPage = 10;
+  int totalBooks = 100; // Variabel untuk menyimpan total buku
   final double bookHeight = 110.0; // Tinggi tetap buku
 
   @override
   void initState() {
     super.initState();
-    allBooks = fetchBooks("");
+    allBooks = fetchBooks("", currentPage, booksPerPage);
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         iconTheme: IconThemeData(color: Colors.white),
@@ -135,36 +132,38 @@ Widget build(BuildContext context) {
           ),
         ),
       ),
-    drawer: const LeftDrawer(),
-    body: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: Column(
-          children: <Widget>[
-            buildBookSection('Semua Buku', allBooks),
-          ],
+      drawer: const LeftDrawer(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Column(
+            children: <Widget>[
+              buildBookSection('Semua Buku', allBooks),
+              buildPageNavigation(),
+              buildPageSelection(),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
-  return FutureBuilder<List<Book>>(
-    future: booksFuture,
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator();
-      } else if (snapshot.hasError) {
-        return Text("Error: ${snapshot.error}");
-      } else if (snapshot.hasData) {
-        return _buildSection(sectionTitle, snapshot.data!);
-      } else {
-        return Text("No data available");
-      }
-    },
-  );
-}
+  Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
+    return FutureBuilder<List<Book>>(
+      future: booksFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else if (snapshot.hasData) {
+          return _buildSection(sectionTitle, snapshot.data!);
+        } else {
+          return Text("No data available");
+        }
+      },
+    );
+  }
 
   Widget _buildSection(String sectionTitle, List<Book> books) {
     return Column(
@@ -292,7 +291,109 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
   );
 }
 
+  Widget buildPageNavigation() {
+    int totalPages = (totalBooks / booksPerPage).ceil(); // Menghitung total halaman
 
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            if (currentPage > 1) {
+              setState(() {
+                currentPage--;
+                allBooks = fetchBooks("", currentPage, booksPerPage);
+              });
+            }
+          },
+        ),
+        Text('Halaman $currentPage dari $totalPages'), // Menampilkan informasi halaman
+        IconButton(
+          icon: Icon(Icons.arrow_forward_ios),
+          onPressed: () {
+            if (currentPage < totalPages) {
+              setState(() {
+                currentPage++;
+                allBooks = fetchBooks("", currentPage, booksPerPage);
+              });
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+Widget buildPageSelection() {
+  int totalPages = (totalBooks / booksPerPage).ceil();
+  List<Widget> pageList = [];
+
+  // Fungsi untuk membuat tombol halaman
+  Widget pageButton(int page) {
+    return TextButton(
+      onPressed: () => goToPage(page),
+      child: Text(
+        '$page',
+        style: TextStyle(
+          fontWeight: currentPage == page ? FontWeight.bold : FontWeight.normal,
+          color: currentPage == page ? Colors.blue : Colors.black, // Warna biru jika halaman saat ini
+        ),
+      ),
+    );
+  }
+
+  // Fungsi untuk menambahkan pemisah yang lebih kecil
+  void addSeparator() {
+    pageList.add(SizedBox(width: 1)); // Sesuaikan lebar sesuai kebutuhan
+  }
+
+  // Selalu tambahkan halaman 1
+  pageList.add(pageButton(1));
+
+  // Tambahkan ellipsis jika perlu di sebelah kanan halaman 1
+  if (currentPage > 3) {
+    addSeparator();
+    pageList.add(Text('...'));
+  }
+
+  // Tambahkan halaman saat ini, sebelum, dan sesudah, tetapi tidak termasuk 1 dan terakhir
+  if (currentPage > 2 && currentPage < totalPages) {
+    addSeparator();
+    pageList.add(pageButton(currentPage - 1));
+  }
+  if (currentPage != 1 && currentPage != totalPages) {
+    addSeparator();
+    pageList.add(pageButton(currentPage));
+  }
+  if (currentPage < totalPages - 1 && currentPage > 1) {
+    addSeparator();
+    pageList.add(pageButton(currentPage + 1));
+  }
+
+  // Tambahkan ellipsis jika perlu di sebelah kiri halaman terakhir
+  if (currentPage < totalPages - 2) {
+    addSeparator();
+    pageList.add(Text('...'));
+  }
+
+  // Selalu tambahkan halaman terakhir
+  if (totalPages > 1) {
+    addSeparator();
+    pageList.add(pageButton(totalPages));
+  }
+
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: pageList,
+  );
+}
+
+  void goToPage(int page) {
+    setState(() {
+      currentPage = page;
+      allBooks = fetchBooks("", currentPage, booksPerPage);
+    });
+  }
 
   String processTitle(String title) {
     var words = title.split(' ');
@@ -311,6 +412,6 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
   }
 
   void _onSearch() {
-    // Implementasi pencarian
+    // Implementation of _onSearch
   }
 }
