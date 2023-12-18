@@ -170,12 +170,22 @@ class LeftDrawer extends StatelessWidget {
             leading: Icon(Icons.shopping_cart_outlined),
             title: Text('Keranjang Saya'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => KeranjangPage(),
-                ),
-              );
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => KeranjangPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
           ListTile(

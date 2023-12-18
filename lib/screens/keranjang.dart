@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
+import 'package:gede_books/widgets/empty_cart.dart';
 
 class ShopItem {
   final String name;
@@ -51,7 +52,12 @@ class KeranjangPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Handle shopping cart action
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => KeranjangPage(),
+                ),
+              );
             },
           ),
         ],
@@ -90,6 +96,15 @@ class KeranjangPage extends StatelessWidget {
           ),
 
         ),
+      ),
+      body: items.isEmpty
+          ? EmptyCart() // Tampilkan EmptyCart jika daftar item kosong
+          : ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return ShopCard(item);
+        },
       ),
     );
   }
