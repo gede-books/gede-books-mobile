@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gede_books/screens/menu.dart';
 import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/screens/wishlist.dart';
+import 'package:gede_books/screens/semua_buku.dart';
 import 'package:gede_books/screens/order_history.dart';
 import 'package:gede_books/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -106,7 +107,12 @@ class LeftDrawer extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  // Jika ingin melihat seluruh koleksi buku
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AllBookPage(),
+                    ),
+                  );
                 },
               ),
               ListTile(

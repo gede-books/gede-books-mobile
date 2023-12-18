@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
-import 'package:gede_books/screens/keranjang.dart';
 
 class ShopItem {
   final String name;
@@ -52,12 +51,7 @@ class OrderHistoryPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => KeranjangPage(),
-                ),
-              );
+              // Handle shopping cart action
             },
           ),
         ],
