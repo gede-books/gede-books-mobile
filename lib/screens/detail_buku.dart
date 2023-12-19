@@ -74,70 +74,91 @@ class _BookDetailPageState extends State<BookDetailPage> {
           ),
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(widget.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)), // Title
-            SizedBox(height: 20), // Space between title and image
-            Image.asset(widget.imagePath),
-            Text("Author: ${widget.author}"),
-            Text("Price: Rp. ${widget.price},-"),
-            SizedBox(height: 20), // Space before buttons
-            Row(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.0), // Margin di sisi halaman
+          child: Center(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    /*
-                    TODO: Tambahin logic untuk memasukkan ke keranjang disini
-                    */
-                    setState(() {
-                      isCartPressed = !isCartPressed;
-                    });
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyHomePage()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: isCartPressed ? Colors.blue : Colors.grey[850], // Color change when pressed
-                    onPrimary: Colors.white,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.add),
-                      Text(' Keranjang'),
-                    ],
-                  ),
+                SizedBox(height: 20),
+                Text(
+                  widget.title, // Title
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center
                 ),
-                SizedBox(width: 10), // Space between buttons
-                OutlinedButton(
-                  onPressed: () {
-                    /*
-                    TODO: Tambahin logic untuk memasukkan ke wishlist disini
-                    */
-                    setState(() {
-                      isWishListPressed = !isWishListPressed;
-                    });
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyHomePage()),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    primary: isWishListPressed ? Colors.white : Colors.grey[850], // Text color change when pressed
-                    backgroundColor: isWishListPressed ? Colors.pink : Colors.white, // Background color change when pressed
-                    side: BorderSide(color: isWishListPressed ? Colors.pink : Color.fromARGB(255, 30, 30, 30)), // Border color change when pressed
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.favorite_border),
-                      Text(' Wishlist'),
-                    ],
-                  ),
+                SizedBox(height: 20), // Space between title and image
+                Image.asset(widget.imagePath),
+                Text("Author: ${widget.author}"),
+                Text("Price: Rp. ${widget.price},-"),
+                SizedBox(height: 20), // Space before buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        /*
+                        TODO: Tambahkan logic untuk memasukkan ke keranjang di sini
+                        */
+                        setState(() {
+                          isCartPressed = !isCartPressed;
+                        });
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => MyHomePage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: isCartPressed ? Colors.blue : Colors.grey[850], // Color change when pressed
+                        onPrimary: Colors.white,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.add),
+                          Text(' Keranjang'),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 10), // Space between buttons
+                    OutlinedButton(
+                      onPressed: () {
+                        /*
+                        TODO: Tambahkan logic untuk memasukkan ke wishlist di sini
+                        */
+                        setState(() {
+                          isWishListPressed = !isWishListPressed;
+                        });
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => MyHomePage()),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        primary: isWishListPressed ? Colors.white : Colors.grey[850], // Text color change when pressed
+                        backgroundColor: isWishListPressed ? Colors.pink : Colors.white, // Background color change when pressed
+                        side: BorderSide(color: isWishListPressed ? Colors.pink : Color.fromARGB(255, 30, 30, 30)), // Border color change when pressed
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.favorite_border),
+                          Text(' Wishlist'),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
+                SizedBox(height: 20),
+                /*
+                TODO: Modifikasi modul review MULAI DARI SINI
+                NOTE: Kode sebelum ini sebisa mungkin jangan diubah-ubah karena udah modul orang lain
+                */
+                Text(
+                  "Review", // Tulisan "Review"
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 20),
+                // INI BATAS UNTUK MODUL REVIEW. Jangan merubah atau menghapus kode yang berasa setelah ini, semua modul review ditaruh sebelum kurung kurawal di bawah
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
