@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gede_books/models/product.dart';
 import 'package:gede_books/screens/menu.dart';
 
 class BookDetailPage extends StatefulWidget {
@@ -6,12 +7,24 @@ class BookDetailPage extends StatefulWidget {
   final String author;
   final String imagePath;
   final int price;
+  final int bookCode;
+  final Language language;
+  final Year year;
+  final String subjects;
+  final String category;
+  double rating = 0.0;
 
   BookDetailPage({
     required this.title,
     required this.author,
     required this.imagePath,
     required this.price,
+    required this.bookCode,
+    required this.language,
+    required this.year,
+    required this.subjects,
+    required this.category,
+    required this.rating,
   });
 
   @override

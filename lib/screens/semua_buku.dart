@@ -9,8 +9,14 @@ class Book {
   final String author;
   final String imagePath;
   final int price;
+  final int bookCode;
+  final Language language;
+  final Year year;
+  final String subjects;
+  final String category;
+  double rating = 0.0;
 
-  Book(this.title, this.author, this.imagePath, this.price);
+  Book(this.title, this.author, this.imagePath, this.price, this.bookCode, this.language, this.year, this.subjects, this.category, this.rating);
 }
 
 Future<List<Book>> fetchBooks(String category, int page, int booksPerPage) async {
@@ -28,6 +34,12 @@ Future<List<Book>> fetchBooks(String category, int page, int booksPerPage) async
           '${firstNameValues.reverse[product.fields.firstName]} ${lastNameValues.reverse[product.fields.lastName]}',
           'assets/buku/buku${product.pk}.jpg',
           product.fields.price,
+          product.fields.bookCode,
+          product.fields.language,
+          product.fields.year,
+          product.fields.subjects,
+          product.fields.category,
+          product.fields.rating,
         );
         books.add(book);
       }
@@ -215,6 +227,12 @@ class _AllBookPageState extends State<AllBookPage> {
                       author: book.author,
                       imagePath: book.imagePath,
                       price: book.price,
+                      bookCode: book.bookCode,
+                      language: book.language,
+                      year: book.year,
+                      subjects: book.subjects,
+                      category: book.category,
+                      rating: book.rating,
                     ),
                   ),
                 );
