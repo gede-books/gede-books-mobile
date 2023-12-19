@@ -13,8 +13,14 @@ class Book {
   final String author;
   final String imagePath;
   final int price;
+  final int bookCode;
+  final Language language;
+  final Year year;
+  final String subjects;
+  final String category;
+  double rating = 0.0;
 
-  Book(this.title, this.author, this.imagePath, this.price);
+  Book(this.title, this.author, this.imagePath, this.price, this.bookCode, this.language, this.year, this.subjects, this.category, this.rating);
 }
 
 Future<List<Book>> fetchBooks(String category) async {
@@ -37,6 +43,12 @@ Future<List<Book>> fetchBooks(String category) async {
           '${firstNameValues.reverse[product.fields.firstName]} ${lastNameValues.reverse[product.fields.lastName]}',
           'assets/buku/buku${product.pk}.jpg',
           product.fields.price,
+          product.fields.bookCode,
+          product.fields.language,
+          product.fields.year,
+          product.fields.subjects,
+          product.fields.category,
+          product.fields.rating,
         );
         books.add(book);
         booksTaken++;
@@ -271,6 +283,12 @@ Widget _buildSectionFeatured(String sectionTitle, List<Book> books) {
                         author: books[index].author,
                         imagePath: books[index].imagePath,
                         price: books[index].price,
+                        bookCode: books[index].bookCode,
+                        language: books[index].language,
+                        year: books[index].year,
+                        subjects: books[index].subjects,
+                        category: books[index].category,
+                        rating: books[index].rating,
                       ),
                     ),
                   );
@@ -408,10 +426,16 @@ Widget _buildSection(String sectionTitle, List<Book> books) {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BookDetailPage(
-                      title: books[index].title,
-                      author: books[index].author,
-                      imagePath: books[index].imagePath,
-                      price: books[index].price,
+                        title: books[index].title,
+                        author: books[index].author,
+                        imagePath: books[index].imagePath,
+                        price: books[index].price,
+                        bookCode: books[index].bookCode,
+                        language: books[index].language,
+                        year: books[index].year,
+                        subjects: books[index].subjects,
+                        category: books[index].category,
+                        rating: books[index].rating,
                     ),
                   ),
                 );
