@@ -24,18 +24,53 @@ class BookDetailPage extends StatefulWidget {
   _BookDetailPageState createState() => _BookDetailPageState();
 }
 
-Future<void> tambahKeKeranjang() async {
+Future<void> tambahKeKeranjang({
+  required String title,
+  required String author,
+  required String imagePath,
+  required int price,
+  required BuildContext context,
+}) async {
   final url = 'https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/';
-  final response = await http.post(Uri.parse(url), body: {
-    /*
-    TODO divi jangan lupa pass model
-     */
-  });
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      body: {
+        'title': title,
+        'author': author,
+        'imagePath': imagePath,
+        'price': price.toString(),
+      },
+    );
 
-  if (response.statusCode == 200) {
-    // TODO DIVI
-  } else {
-    // TODO DIVI
+    if (response.statusCode == 200) {
+      // Successful response, handle accordingly
+      print('Book added to cart successfully.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Book added to cart successfully.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      // Handle error
+      print('Failed to add book to cart.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to add book to cart.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  } catch (error) {
+    // Handle other errors, e.g., network issues
+    print('Error: $error');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('An error occurred.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 }
 
@@ -128,7 +163,13 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 ElevatedButton(
                   onPressed: () {
                     if (request.loggedIn) {
-                      tambahKeKeranjang();
+                      tambahKeKeranjang(
+                        title: widget.title,
+                        author: widget.author,
+                        imagePath: widget.imagePath,
+                        price: widget.price,
+                        context: context,
+                      );
                     }
                     else if (!request.loggedIn) {
                       Navigator.push(

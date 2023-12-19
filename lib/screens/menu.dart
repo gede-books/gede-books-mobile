@@ -441,10 +441,12 @@ Widget _buildSection(String sectionTitle, List<Book> books) {
                               color: const Color.fromARGB(255, 65, 65, 65),
                             ),
                             Center(
-                              child: Image.asset(
-                                books[index].imagePath,
-                                height: bookHeight,
-                              ),
+                              child: books[index].imagePath.isNotEmpty
+                                ? Image.asset(
+                                  books[index].imagePath,
+                                  height: bookHeight,
+                                )
+                                : Icon(Icons.image_not_supported, size: 48, color: Colors.white), 
                             ),
                           ],
                         ),

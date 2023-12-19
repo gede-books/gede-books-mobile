@@ -20,7 +20,7 @@ class Book {
 
 Future<List<Book>> fetchBooks(String category, int page, int booksPerPage) async {
   // URL mungkin perlu diubah untuk mendukung pagination
-  final response = await http.get(Uri.parse('https://gedebooks-a07-tk.pbp.cs.ui.ac.id/json/?page=$page'));
+  final response = await http.get(Uri.parse('https://lidwina-eurora-gedebooks.stndar.dev/json/?page=$page'));
 
   if (response.statusCode == 200) {
     List<Product> products = productFromJson(response.body);
