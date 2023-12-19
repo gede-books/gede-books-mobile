@@ -32,9 +32,9 @@ Future<List<Book>> fetchBooks(String category) async {
       if (booksTaken >= 5) {
         break; // Jika sudah mengambil 100 buku, keluar dari loop
       }
-
+      
       if (product.fields.category.contains(category) &&
-          product.pk != 238 && product.pk != 106) {
+          product.pk >= 1 && product.pk <= 100) { // Menambahkan kondisi untuk pk dari 1 sampai 100
         final book = Book(
           product.fields.title,
           '${firstNameValues.reverse[product.fields.firstName]} ${lastNameValues.reverse[product.fields.lastName]}',
