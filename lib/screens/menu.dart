@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/screens/detail_buku.dart';
+import 'package:gede_books/screens/kategori_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
 import 'package:gede_books/models/product.dart'; // Pastikan path ini benar
 
@@ -233,7 +234,12 @@ Widget _buildSectionFeatured(String sectionTitle, List<Book> books) {
                   ),
                   child: TextButton(
                     onPressed: () {
-                      // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoryBookPage(category: 'Best'),
+                        ),
+                      );
                     },
                     child: Text(
                       'Lihat Semua',
@@ -369,7 +375,13 @@ Widget _buildSection(String sectionTitle, List<Book> books) {
               padding: EdgeInsets.only(right: 0.0),
               child: TextButton(
                 onPressed: () {
-                  // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
+                  String firstWord = sectionTitle.split(' ')[0]; // Mengambil kata pertama dari sectionTitle
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: firstWord),
+                    ),
+                  );
                 },
                 child: Text(
                   'Lihat Semua',
