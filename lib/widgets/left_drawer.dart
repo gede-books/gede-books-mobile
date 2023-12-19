@@ -130,43 +130,78 @@ class LeftDrawer extends StatelessWidget {
               ListTile(
                 title: const Text('     Children'),
                 onTap: () {
-                  // Aksi ketika 'Children' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Children'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Harvard Classics'),
                 onTap: () {
-                  // Aksi ketika 'Harvard Classics' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Harvard'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Historical Fiction'),
                 onTap: () {
-                  // Aksi ketika 'Historical Fiction' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Historical'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Horror'),
                 onTap: () {
-                  // Aksi ketika 'Horror' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Horror'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Love'),
                 onTap: () {
-                  // Aksi ketika 'Love' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Love'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Movie'),
                 onTap: () {
-                  // Aksi ketika 'Movie' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Movie'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Science Fiction'),
                 onTap: () {
-                  // Aksi ketika 'Sci-Fi' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Science'),
+                    ),
+                  );
                 },
               ),
               // Tambahkan lebih banyak ListTile di sini untuk kategori lain
@@ -218,7 +253,7 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
-          if (!request.loggedIn)
+          if (!request.loggedIn) 
             ListTile(
               leading: Icon(Icons.person_outline),
               title: Text('Login'),
@@ -243,7 +278,7 @@ class LeftDrawer extends StatelessWidget {
               ),
               onTap: () async {
 
-                final response = await request.logout("https://gedebooks-a07-tk.pbp.cs.ui.ac.id/auth/logout/");
+                final response = await request.logout("https://lidwina-eurora-gedebooks.stndar.dev/auth/logout/");
                 String message = response["message"];
 
                 if (response['status']) {

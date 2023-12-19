@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/screens/detail_buku.dart';
+import 'package:gede_books/screens/kategori_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
 import 'package:gede_books/models/product.dart'; // Pastikan path ini benar
 
@@ -16,8 +17,14 @@ class Book {
   final String author;
   final String imagePath;
   final int price;
+  final int bookCode;
+  final Language language;
+  final Year year;
+  final String subjects;
+  final String category;
+  double rating = 0.0;
 
-  Book(this.title, this.author, this.imagePath, this.price);
+  Book(this.title, this.author, this.imagePath, this.price, this.bookCode, this.language, this.year, this.subjects, this.category, this.rating);
 }
 
 Future<List<Book>> fetchBooks(String category) async {
@@ -40,6 +47,12 @@ Future<List<Book>> fetchBooks(String category) async {
           '${firstNameValues.reverse[product.fields.firstName]} ${lastNameValues.reverse[product.fields.lastName]}',
           'assets/buku/buku${product.pk}.jpg',
           product.fields.price,
+          product.fields.bookCode,
+          product.fields.language,
+          product.fields.year,
+          product.fields.subjects,
+          product.fields.category,
+          product.fields.rating,
         );
         books.add(book);
         booksTaken++;
@@ -253,7 +266,12 @@ Widget _buildSectionFeatured(String sectionTitle, List<Book> books) {
                   ),
                   child: TextButton(
                     onPressed: () {
-                      // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoryBookPage(category: 'Best'),
+                        ),
+                      );
                     },
                     child: Text(
                       'Lihat Semua',
@@ -285,6 +303,12 @@ Widget _buildSectionFeatured(String sectionTitle, List<Book> books) {
                         author: books[index].author,
                         imagePath: books[index].imagePath,
                         price: books[index].price,
+                        bookCode: books[index].bookCode,
+                        language: books[index].language,
+                        year: books[index].year,
+                        subjects: books[index].subjects,
+                        category: books[index].category,
+                        rating: books[index].rating,
                       ),
                     ),
                   );
@@ -389,7 +413,13 @@ Widget _buildSection(String sectionTitle, List<Book> books) {
               padding: EdgeInsets.only(right: 0.0),
               child: TextButton(
                 onPressed: () {
-                  // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
+                  String firstWord = sectionTitle.split(' ')[0]; // Mengambil kata pertama dari sectionTitle
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: firstWord),
+                    ),
+                  );
                 },
                 child: Text(
                   'Lihat Semua',
@@ -416,10 +446,16 @@ Widget _buildSection(String sectionTitle, List<Book> books) {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BookDetailPage(
-                      title: books[index].title,
-                      author: books[index].author,
-                      imagePath: books[index].imagePath,
-                      price: books[index].price,
+                        title: books[index].title,
+                        author: books[index].author,
+                        imagePath: books[index].imagePath,
+                        price: books[index].price,
+                        bookCode: books[index].bookCode,
+                        language: books[index].language,
+                        year: books[index].year,
+                        subjects: books[index].subjects,
+                        category: books[index].category,
+                        rating: books[index].rating,
                     ),
                   ),
                 );

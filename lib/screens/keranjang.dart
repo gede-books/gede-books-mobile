@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gede_books/screens/detail_buku.dart';
+import 'package:gede_books/screens/menu.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
 import 'package:gede_books/widgets/empty_cart.dart';
 
@@ -7,12 +9,14 @@ class ShopItem {
   final String author;
   final String imagePath;
   final int price;
+  final int bookCode;
 
   ShopItem({
     required this.title,
     required this.author,
     required this.imagePath,
     required this.price,
+    required this.bookCode,
   });
 }
 
@@ -79,12 +83,56 @@ class _KeranjangPageState extends State<KeranjangPage> {
     );
   }
 
-    void tambahKeKeranjang(ShopItem item) {
-    setState(() {
-      widget.items.add(item);
-    });
+  // void tambahKeKeranjang(Book book) {
+  //   bool isBookInCart = widget.items.any((item) => item.bookCode == book.bookCode);
+
+  //   if (!isBookInCart) {
+  //     setState(() {
+  //       widget.items.add(ShopItem(
+  //         title: book.title,
+  //         author: book.author,
+  //         imagePath: book.imagePath,
+  //         price: book.price,
+  //         bookCode: book.bookCode,
+  //       ));
+  //     });
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Buku ditambahkan ke keranjang')),
+  //     );
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Buku sudah ada di keranjang')),
+  //     );
+  //   }
+  // }
+}
+
+class KeranjangModel extends ChangeNotifier {
+  List<ShopItem> items = [];
+
+  void tambahKeKeranjang(Book book) {
+    bool isBookInCart = items.any((item) => item.bookCode == book.bookCode);
+
+    if (!isBookInCart) {
+      items.add(ShopItem(
+        title: book.title,
+        author: book.author,
+        imagePath: book.imagePath,
+        price: book.price,
+        bookCode: book.bookCode,
+      ));
+      notifyListeners(); // Notify listeners of the change
+      print("yes");
+    } else {
+      // Show a snackbar or handle the case where the book is already in the cart
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Buku sudah ada di keranjang')),
+      // );
+      print("no");
+    }
   }
 }
+
 
 class ShopCard extends StatelessWidget {
   final ShopItem item;
