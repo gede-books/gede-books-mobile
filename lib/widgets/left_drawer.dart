@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:gede_books/screens/menu.dart';
 import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/screens/wishlist.dart';
+import 'package:gede_books/screens/semua_buku.dart';
+import 'package:gede_books/screens/kategori_buku.dart';
 import 'package:gede_books/screens/order_history.dart';
+import 'package:gede_books/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Drawer(
       child: ListView( // Menggunakan ListView untuk memungkinkan item-itemnya scrollable
         children: <Widget>[
@@ -59,6 +66,23 @@ class LeftDrawer extends StatelessWidget {
               ),
             ),
           ),
+          FutureBuilder<String?>(
+            future: _getStoredUsername(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListTile(
+                  title: Text(
+                      'Welcome, ${snapshot.data}!',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              } else {
+                return Container(); // Handle loading or errors
+              }
+            },
+          ),
           ListTile(
             leading: Icon(Icons.home_outlined),
             title: Text('Halaman Utama'),
@@ -76,51 +100,108 @@ class LeftDrawer extends StatelessWidget {
             title: Text('Kategori'),
             children: <Widget>[
               ListTile(
+                title: Text(
+                  '    Lihat Semua Buku',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold, // Mengatur teks menjadi italic
+                    color: Colors.blue[900], // Mengatur warna teks
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AllBookPage(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
                 title: const Text('     Adventure'),
                 onTap: () {
-                  // Aksi ketika 'Adventure' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Adventure'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Children'),
                 onTap: () {
-                  // Aksi ketika 'Children' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Children'),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('     Harvard Classics'),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Harvard'),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('     Historical Fiction'),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Historical'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Horror'),
                 onTap: () {
-                  // Aksi ketika 'Horror' dipilih
-                },
-              ),
-              ListTile(
-                title: const Text('     Humorous'),
-                onTap: () {
-                  // Aksi ketika 'Humorous' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Horror'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Love'),
                 onTap: () {
-                  // Aksi ketika 'Love' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Love'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: const Text('     Movie'),
                 onTap: () {
-                  // Aksi ketika 'Movie' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Movie'),
+                    ),
+                  );
                 },
               ),
               ListTile(
-                title: const Text('     Politics'),
+                title: const Text('     Science Fiction'),
                 onTap: () {
-                  // Aksi ketika 'Politics' dipilih
-                },
-              ),
-              ListTile(
-                title: const Text('     Sci-Fi'),
-                onTap: () {
-                  // Aksi ketika 'Sci-Fi' dipilih
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryBookPage(category: 'Science'),
+                    ),
+                  );
                 },
               ),
               // Tambahkan lebih banyak ListTile di sini untuk kategori lain
@@ -130,12 +211,22 @@ class LeftDrawer extends StatelessWidget {
             leading: Icon(Icons.shopping_cart_outlined),
             title: Text('Keranjang Saya'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => KeranjangPage(),
-                ),
-              );
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => KeranjangPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
           ListTile(
@@ -162,15 +253,62 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
-          ListTile(
-            leading: Icon(Icons.person_outline),
-            title: Text('Login'),
-            onTap: () {
-              // Aksi ketika 'Login' dipilih
-            },
-          ),
+          if (!request.loggedIn) 
+            ListTile(
+              leading: Icon(Icons.person_outline),
+              title: Text('Login'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
+            ),
+          if (request.loggedIn)
+            ListTile(
+              leading: Icon(
+                Icons.person_outline,
+                color: Colors.red,
+              ),
+              title: Text(
+                'Logout',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              onTap: () async {
+
+                final response = await request.logout("https://lidwina-eurora-gedebooks.stndar.dev/auth/logout/");
+                String message = response["message"];
+
+                if (response['status']) {
+                  String uname = response["username"];
+                  await _clearStoredUsername();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("$message Sampai jumpa, $uname."),
+                  ));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyHomePage()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("$message"),
+                  ));
+                }
+              },
+            ),
         ],
       ),
     );
+  }
+  Future<void> _clearStoredUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+  }
+
+  Future<String?> _getStoredUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username');
   }
 }

@@ -30,22 +30,34 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_native_splash: ^2.3.8
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  provider: ^6.1.1
+  pbp_django_auth: ^0.4.0
+  shared_preferences: ^2.2.2
+  http: ^1.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
+flutter_native_splash:
+  background_image: "assets/images/background-splash.png"
+  # color: "#42a5f5"
+  image: assets/images/GEDE-Books Logo.png
+  android: true
+  ios: true
+  web: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -61,10 +73,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:     
     - assets/images/
-    - assets/buku/1-25/
-    - assets/buku/26-50/
-    - assets/buku/51-75/
-    - assets/buku/76-100/
+    - assets/buku/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
