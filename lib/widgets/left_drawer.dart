@@ -144,7 +144,7 @@ class LeftDrawer extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryBookPage(category: 'Harvard'),
+                      builder: (context) => CategoryBookPage(category: 'Harvard Classics'),
                     ),
                   );
                 },
@@ -155,7 +155,7 @@ class LeftDrawer extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryBookPage(category: 'Historical'),
+                      builder: (context) => CategoryBookPage(category: 'Historical Fiction'),
                     ),
                   );
                 },
@@ -199,7 +199,7 @@ class LeftDrawer extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryBookPage(category: 'Science'),
+                      builder: (context) => CategoryBookPage(category: 'Science Fiction'),
                     ),
                   );
                 },

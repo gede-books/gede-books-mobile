@@ -184,31 +184,13 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center, // Ubah menjadi center
             children: [
-              Padding(
-                padding: EdgeInsets.only(left: 8.0), 
-                child: Text(
-                  sectionTitle,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(right: 0.0), 
-                child: TextButton(
-                  onPressed: () {
-                    // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
-                  },
-                  child: Text(
-                    'Lihat Semua',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue[900],
-                    ),
-                  ),
+              Text(
+                'Kategori buku: "${widget.category}${widget.category.split(' ').length == 1 ? ' books' : ''}"',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -240,7 +222,7 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
               },
               child: Container(
                 width: 170,
-                height: 265,
+                height: 280,
                 child: Card(
                   margin: EdgeInsets.all(5),
                   child: ClipRRect(

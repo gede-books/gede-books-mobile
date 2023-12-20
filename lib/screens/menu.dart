@@ -291,7 +291,7 @@ Widget _buildSectionFeatured(String sectionTitle, List<Book> books) {
           ),
         ),
         Container(
-          height: 265,
+          height: 280,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: books.length,
@@ -438,7 +438,7 @@ Widget _buildSection(String sectionTitle, List<Book> books) {
         ),
       ),
       Container(
-        height: 265, // Tinggi container disesuaikan dengan kebutuhan
+        height: 280, // Tinggi container disesuaikan dengan kebutuhan
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: books.length,
