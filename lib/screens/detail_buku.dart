@@ -1,3 +1,4 @@
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'dart:convert' as convert;
 import 'package:gede_books/models/cart.dart';
 
 class BookDetailPage extends StatefulWidget {
@@ -159,20 +160,32 @@ class _BookDetailPageState extends State<BookDetailPage> {
                         if (isLoggedIn) {
                           // TODO pass data add to cart
                           // endpoint: "https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}"
-                          final response = await http.post(Uri.parse("https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}/"));
+                          final response = await request.postJson(
+                            "https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}/",
+                            convert.jsonEncode(<String, String>{
+                              "id": widget.bookCode.toString(),
+                              "title": widget.title,
+                              "quantity": "1",
+                              "price": widget.price.toString(),
+                              "total_price": widget.price.toString(),
+                              "image_url": widget.imagePath,
+                            })
+                          );
 
-                          print("sini");
-                          print(response.statusCode);
-                          print(response.body);
-
-                          if (response.statusCode == 302) {
-                            final redirectUrl = response.headers['location'];
-                            // ignore: unused_local_variable
-                            final redirectedResponse = await http.get(Uri.parse(redirectUrl!));
+                          if (response['status'] == 'success') {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Buku berhasil ditambahkan!"),
+                            ));
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content:
+                                  Text("Gagal menambahkan buku ke dalam keranjang."),
+                            ));
                           }
                         }
                         else if (!isLoggedIn) {
-                          print("situ");
                           Navigator.push(
                             context,
                             MaterialPageRoute(

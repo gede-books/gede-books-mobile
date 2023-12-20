@@ -8,37 +8,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:gede_books/models/cart.dart';
 import 'package:gede_books/models/product.dart';
-
-
-
-class ShopItem {
-  final String title;
-  final String author;
-  final String imagePath;
-  final int price;
-  final int bookCode;
-
-  ShopItem({
-    required this.title,
-    required this.author,
-    required this.imagePath,
-    required this.price,
-    required this.bookCode,
-  });
-}
-
-Future<List<CartItem>> _fetchData() async {
-  final response = await http.get(Uri.parse("https://lidwina-eurora-gedebooks.stndar.dev/api/get_cart_json/"));
-
-  if (response.statusCode == 200) {
-    final List<dynamic> jsonResponse = json.decode(response.body);
-    List<CartItem> cartItemList = jsonResponse.map((item) => cartItemFromJson(json.encode(item))).toList();
-
-    return cartItemList;
-  } else {
-    throw Exception('Failed to load data. Status code: ${response.statusCode}');
-  }
-}
+import 'package:gede_books/widgets/left_drawer.dart';
 
 class KeranjangPage extends StatefulWidget {
   KeranjangPage({Key? key}) : super(key: key);
@@ -48,14 +18,14 @@ class KeranjangPage extends StatefulWidget {
 }
 
 class _KeranjangPageState extends State<KeranjangPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Keranjang'),
       ),
-      body: FutureBuilder<List<CartItem>>(
+      drawer: const LeftDrawer(),
+      body: FutureBuilder(
         future: _fetchData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -69,15 +39,12 @@ class _KeranjangPageState extends State<KeranjangPage> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return EmptyCart();
           } else {
+            List<CartItemElement> cartItemList = snapshot.data!;
             return ListView.builder(
-              itemCount: snapshot.data!.length,
+              itemCount: cartItemList.length,
               itemBuilder: (context, index) {
-                final cartItem = snapshot.data![index];
-                return Column(
-                  children: cartItem.cartItems.map((cartItemElement) {
-                    return ShopCard(cartItemElement);
-                  }).toList(),
-                );
+                final cartItem = cartItemList[index];
+                return ShopCard(cartItem);
               },
             );
           }
@@ -85,9 +52,21 @@ class _KeranjangPageState extends State<KeranjangPage> {
       ),
     );
   }
+    Future<List<CartItemElement>> _fetchData() async {
+      final request = context.watch<CookieRequest>();
+      final response = await request.get("https://lidwina-eurora-gedebooks.stndar.dev/api/get_cart_json/");
+
+      List<CartItemElement> result = [];
+        for (var d in response) {
+          if (d != null) {
+            result.add(CartItemElement.fromJson(d));
+          }
+        }
+
+      return result;   
+    }
+  
 }
-
-
 
 class ShopCard extends StatelessWidget {
   final CartItemElement item;
@@ -101,17 +80,15 @@ class ShopCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Tambahkan widget Image untuk menampilkan gambar
             Image.network(
-              item.imageUrl, // Ganti dengan path atau URL sesuai kebutuhan
-              width: 150,  // Sesuaikan lebar gambar sesuai kebutuhan
-              height: 200, // Sesuaikan tinggi gambar sesuai kebutuhan
-              fit: BoxFit.cover, // Sesuaikan fit gambar sesuai kebutuhan
+              item.imageUrl,
+              width: 150,
+              height: 200,
+              fit: BoxFit.cover,
             ),
-            SizedBox(height: 10), // Tambahkan spasi antara gambar dan teks
+            SizedBox(height: 10),
             Text(item.title),
             Text("Price: Rp. ${item.price},-"),
-            // ... (tambahkan widget atau informasi lainnya sesuai kebutuhan)
           ],
         ),
       ),
