@@ -211,12 +211,22 @@ class LeftDrawer extends StatelessWidget {
             leading: Icon(Icons.shopping_cart_outlined),
             title: Text('Keranjang Saya'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => KeranjangPage(),
-                ),
-              );
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => KeranjangPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
           ListTile(
@@ -243,7 +253,7 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
-          if (!request.loggedIn)
+          if (!request.loggedIn) 
             ListTile(
               leading: Icon(Icons.person_outline),
               title: Text('Login'),
@@ -268,7 +278,7 @@ class LeftDrawer extends StatelessWidget {
               ),
               onTap: () async {
 
-                final response = await request.logout("https://gedebooks-a07-tk.pbp.cs.ui.ac.id/auth/logout/");
+                final response = await request.logout("https://lidwina-eurora-gedebooks.stndar.dev/auth/logout/");
                 String message = response["message"];
 
                 if (response['status']) {

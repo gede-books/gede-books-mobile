@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
+import 'package:gede_books/screens/keranjang.dart';
+import 'package:gede_books/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShopItem {
   final String name;
@@ -22,6 +27,7 @@ class OrderHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
@@ -51,7 +57,22 @@ class OrderHistoryPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Handle shopping cart action
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => KeranjangPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
         ],

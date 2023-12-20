@@ -130,7 +130,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 }
 
                 final response = await request.post(
-                    "https://gedebooks-a07-tk.pbp.cs.ui.ac.id/auth/register/", {
+                    "https://lidwina-eurora-gedebooks.stndar.dev/auth/register/", {
                   'username': username,
                   'password1': password,
                   'password2': passwordConfirmation,

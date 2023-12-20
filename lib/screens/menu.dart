@@ -7,6 +7,10 @@ import 'package:gede_books/models/product.dart'; // Pastikan path ini benar
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:gede_books/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Book {
   final String title;
@@ -90,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 @override
 Widget build(BuildContext context) {
+  final request = context.watch<CookieRequest>();
   return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
@@ -119,7 +124,22 @@ Widget build(BuildContext context) {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Handle shopping cart action
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => KeranjangPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
         ],
