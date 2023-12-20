@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/models/product.dart';
 import 'package:gede_books/screens/menu.dart';
+import 'package:gede_books/screens/keranjang.dart';
+import 'package:gede_books/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:gede_books/models/wishlist_model.dart';
 
 class BookDetailPage extends StatefulWidget {
   final String title;
@@ -37,6 +45,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
@@ -89,17 +98,16 @@ class _BookDetailPageState extends State<BookDetailPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0), // Margin di sisi halaman
+          padding:
+              EdgeInsets.symmetric(horizontal: 10.0), // Margin di sisi halaman
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 20),
-                Text(
-                  widget.title, // Title
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center
-                ),
+                Text(widget.title, // Title
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center),
                 SizedBox(height: 20), // Space between title and image
                 Image.asset(widget.imagePath),
                 Text("Author: ${widget.author}"),
@@ -121,7 +129,9 @@ class _BookDetailPageState extends State<BookDetailPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: isCartPressed ? Colors.blue : Colors.grey[850], // Color change when pressed
+                        primary: isCartPressed
+                            ? Colors.blue
+                            : Colors.grey[850], // Color change when pressed
                         onPrimary: Colors.white,
                       ),
                       child: Row(
@@ -133,10 +143,62 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     ),
                     SizedBox(width: 10), // Space between buttons
                     OutlinedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         /*
                         TODO: Tambahkan logic untuk memasukkan ke wishlist di sini
                         */
+                        if (request.loggedIn) {
+                          try {
+                            // Membuat objek WishlistItemElement dari informasi buku
+                            WishlistItemElement booktoAddWishlist =
+                                WishlistItemElement(
+                              id: widget.bookCode,
+                              title: widget.title,
+                              imageUrl: widget.imagePath,
+                            );
+
+                            // Konversi objek WishlistItemElement ke JSON
+                            String objekJson =
+                                json.encode(booktoAddWishlist.toJson());
+
+                            // Mengirim permintaan POST dengan data JSON
+                            final response = await http.post(
+                              Uri.parse(
+                                  "https://lidwina-eurora-gedebooks.stndar.dev/add_to_wishlist/${widget.bookCode}"),
+                              headers: {"Content-Type": 'application/json'},
+                              body: objekJson,
+                            );
+
+                            print(response.statusCode);
+                            if (response.statusCode == 200) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Buku ditambahkan ke wishlist! ^v^')),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Gagal menambahkan buku ke wishlist! :(')),
+                              );
+                            }
+                          } catch (e) {
+                            print('Error: $e');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      'Terjadi kesalahan. Silakan coba lagi nanti')),
+                            );
+                          }
+                        } else if (!request.loggedIn) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
+                        }
                         setState(() {
                           isWishListPressed = !isWishListPressed;
                         });
@@ -145,9 +207,19 @@ class _BookDetailPageState extends State<BookDetailPage> {
                         );
                       },
                       style: OutlinedButton.styleFrom(
-                        primary: isWishListPressed ? Colors.white : Colors.grey[850], // Text color change when pressed
-                        backgroundColor: isWishListPressed ? Colors.pink : Colors.white, // Background color change when pressed
-                        side: BorderSide(color: isWishListPressed ? Colors.pink : Color.fromARGB(255, 30, 30, 30)), // Border color change when pressed
+                        primary: isWishListPressed
+                            ? Colors.white
+                            : Colors
+                                .grey[850], // Text color change when pressed
+                        backgroundColor: isWishListPressed
+                            ? Colors.pink
+                            : Colors
+                                .white, // Background color change when pressed
+                        side: BorderSide(
+                            color: isWishListPressed
+                                ? Colors.pink
+                                : Color.fromARGB(255, 30, 30,
+                                    30)), // Border color change when pressed
                       ),
                       child: Row(
                         children: [
