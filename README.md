@@ -5,8 +5,8 @@ Great Educational, Diverse, and Entertaining Books <br>
 ![Jekyll site CI](https://github.com/gede-books/gede-books/workflows/Jekyll%20site%20CI/badge.svg)
 <br>
 <br>
-Link Web App: [GEDE-Books Web App](https://lidwina-eurora-gedebooks.stndar.dev/)<br>
 Link APK: *[Coming Soon: Something Big is Coming]*<br>
+Link Web App: [GEDE-Books Web App](https://lidwina-eurora-gedebooks.stndar.dev/)<br>
 Link Berita Acara Kelompok: [Berita Acara A07](https://docs.google.com/spreadsheets/d/1QA7fqTy-8oRHMcHAYpt84YCdCz06KNfn/edit?usp=drive_link&ouid=113055651365555467863&rtpof=true&sd=true)
 <br>
 <br>
