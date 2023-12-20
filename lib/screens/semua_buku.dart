@@ -186,35 +186,14 @@ class _AllBookPageState extends State<AllBookPage> {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: 8.0), 
-                child: Text(
-                  sectionTitle,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          child: Center(
+            child: Text(
+              'Semua Koleksi Buku',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              Padding(
-                padding: EdgeInsets.only(right: 0.0), 
-                child: TextButton(
-                  onPressed: () {
-                    // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
-                  },
-                  child: Text(
-                    'Lihat Semua',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue[900],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
         Wrap(
@@ -243,7 +222,7 @@ class _AllBookPageState extends State<AllBookPage> {
               },
               child: Container(
                 width: 170,
-                height: 265,
+                height: 280,
                 child: Card(
                   margin: EdgeInsets.all(5),
                   child: ClipRRect(
