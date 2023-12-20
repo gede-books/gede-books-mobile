@@ -138,27 +138,27 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   ),
                 ),
                 SizedBox(height: 10),
-Center(
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Bahasa",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          SizedBox(width: 8), // Add some space between "Bahasa" and the language name
-          Text(
-            "${widget.language.toString().split('.').last}", // Extract the language name from the enum
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    ],
-  ),
-),
+                Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Bahasa",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(width: 8), // Add some space between "Bahasa" and the language name
+                          Text(
+                            "${widget.language.toString().split('.').last}", // Extract the language name from the enum
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 10),
                 Center(
                   child: Column(
