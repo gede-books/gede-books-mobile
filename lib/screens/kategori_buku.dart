@@ -4,8 +4,11 @@ import 'package:gede_books/screens/cari_buku.dart';
 import 'package:gede_books/screens/detail_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
 import 'package:gede_books/models/product.dart';
+import 'package:gede_books/screens/login.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class Book {
   final String title;
@@ -78,6 +81,7 @@ void initState() {
 
 @override
 Widget build(BuildContext context) {
+  final request = context.watch<CookieRequest>();
   return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
@@ -107,7 +111,22 @@ Widget build(BuildContext context) {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Handle shopping cart action
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => KeranjangPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
         ],
@@ -184,31 +203,13 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center, // Ubah menjadi center
             children: [
-              Padding(
-                padding: EdgeInsets.only(left: 8.0), 
-                child: Text(
-                  sectionTitle,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(right: 0.0), 
-                child: TextButton(
-                  onPressed: () {
-                    // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
-                  },
-                  child: Text(
-                    'Lihat Semua',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue[900],
-                    ),
-                  ),
+              Text(
+                'Kategori buku: "${widget.category}${widget.category.split(' ').length == 1 ? ' books' : ''}"',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -240,7 +241,7 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
               },
               child: Container(
                 width: 170,
-                height: 265,
+                height: 280,
                 child: Card(
                   margin: EdgeInsets.all(5),
                   child: ClipRRect(

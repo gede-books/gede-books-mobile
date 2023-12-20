@@ -109,10 +109,12 @@ class LoginPageState extends State<LoginPage> {
                   String message = response['message'];
                   String uname = response['username'];
 
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  await prefs.setBool('isLoggedIn', false);
-                  await prefs.setString('loggedInUsername', uname);
+                  // SharedPreferences prefs =
+                  //     await SharedPreferences.getInstance();
+                  // await prefs.setBool('isLoggedIn', false);
+                  // await prefs.setString('loggedInUsername', uname);
+                  await _saveUsername(uname);
+                  await _saveLoginStatus(true);
 
                   if (!context.mounted) return;
                   Navigator.pushReplacement(
@@ -163,6 +165,11 @@ class LoginPageState extends State<LoginPage> {
   Future<void> _saveUsername(String username) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', username);
+  }
+
+  Future<void> _saveLoginStatus(bool isLoggedIn) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
   }
 
 }

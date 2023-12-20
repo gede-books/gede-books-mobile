@@ -144,7 +144,7 @@ class LeftDrawer extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryBookPage(category: 'Harvard'),
+                      builder: (context) => CategoryBookPage(category: 'Harvard Classics'),
                     ),
                   );
                 },
@@ -155,7 +155,7 @@ class LeftDrawer extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryBookPage(category: 'Historical'),
+                      builder: (context) => CategoryBookPage(category: 'Historical Fiction'),
                     ),
                   );
                 },
@@ -199,7 +199,7 @@ class LeftDrawer extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryBookPage(category: 'Science'),
+                      builder: (context) => CategoryBookPage(category: 'Science Fiction'),
                     ),
                   );
                 },
@@ -233,24 +233,44 @@ class LeftDrawer extends StatelessWidget {
             leading: Icon(Icons.library_books_outlined),
             title: Text('Pesanan Saya'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => OrderHistoryPage(),
-                ),
-              );
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OrderHistoryPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
           ListTile(
             leading: Icon(Icons.favorite_border),
             title: Text('WishList Saya'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WishlistPage(),
-                ),
-              );
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WishlistPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
           if (!request.loggedIn) 

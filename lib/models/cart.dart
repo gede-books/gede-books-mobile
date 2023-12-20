@@ -4,30 +4,6 @@
 
 import 'dart:convert';
 
-CartItem cartItemFromJson(String str) => CartItem.fromJson(json.decode(str));
-
-String cartItemToJson(CartItem data) => json.encode(data.toJson());
-
-class CartItem {
-    List<CartItemElement> cartItems;
-    int total;
-
-    CartItem({
-        required this.cartItems,
-        required this.total,
-    });
-
-    factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
-        cartItems: List<CartItemElement>.from(json["cart_items"].map((x) => CartItemElement.fromJson(x))),
-        total: json["total"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "cart_items": List<dynamic>.from(cartItems.map((x) => x.toJson())),
-        "total": total,
-    };
-}
-
 class CartItemElement {
     int id;
     String title;
@@ -44,6 +20,10 @@ class CartItemElement {
         required this.totalPrice,
         required this.imageUrl,
     });
+
+    factory CartItemElement.fromRawJson(String str) => CartItemElement.fromJson(json.decode(str));
+
+    String toRawJson() => json.encode(toJson());
 
     factory CartItemElement.fromJson(Map<String, dynamic> json) => CartItemElement(
         id: json["id"],
