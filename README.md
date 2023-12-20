@@ -5,7 +5,8 @@ Great Educational, Diverse, and Entertaining Books <br>
 [![Build status](https://build.appcenter.ms/v0.1/apps/b4776e84-61ad-4094-95af-7a0d2648af77/branches/main/badge)](https://appcenter.ms)
 <br>
 <br>
-Link APK: https://install.appcenter.ms/orgs/gede-books-mobile/apps/gede-books-mobile/distribution_groups/public<br>
+Link APK: *[Coming Soon: Something Big is Coming]*<br>
+Link Web App: [GEDE-Books Web App](lidwina-eurora-gedebooks.stndar.dev)<br>
 Link Berita Acara Kelompok: [Berita Acara A07](https://docs.google.com/spreadsheets/d/1QA7fqTy-8oRHMcHAYpt84YCdCz06KNfn/edit?usp=drive_link&ouid=113055651365555467863&rtpof=true&sd=true)
 <br>
 <br>
