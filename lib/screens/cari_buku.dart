@@ -167,15 +167,32 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return CircularProgressIndicator();
       } else if (snapshot.hasError) {
-        return Text("Error: ${snapshot.error}");
+        return Center(
+          child: Text("Error: ${snapshot.error}"),
+        );
       } else if (snapshot.hasData) {
+        // Check if the list of books is empty
+        if (snapshot.data!.isEmpty) {
+          return Center(
+            child: Column(
+              children: [
+                _buildSection(sectionTitle, snapshot.data!), // Tampilkan daftar buku
+                SizedBox(height: 10),
+                Text("Buku tidak ditemukan"),
+              ],
+            ),
+          );
+        }
         return _buildSection(sectionTitle, snapshot.data!);
       } else {
-        return Text("No data available");
+        return Center(
+          child: Text("No data available"),
+        );
       }
     },
   );
 }
+
 
   Widget _buildSection(String sectionTitle, List<Book> books) {
     return Column(
@@ -183,31 +200,13 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center, // Ubah menjadi center
             children: [
-              Padding(
-                padding: EdgeInsets.only(left: 8.0), 
-                child: Text(
-                  sectionTitle,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(right: 0.0), 
-                child: TextButton(
-                  onPressed: () {
-                    // Tambahkan aksi yang ingin diambil saat tombol "Lihat Semua" ditekan
-                  },
-                  child: Text(
-                    'Lihat Semua',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue[900],
-                    ),
-                  ),
+              Text(
+                'Hasil Pencarian: "${widget.title}"',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -239,7 +238,7 @@ Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
               },
               child: Container(
                 width: 170,
-                height: 265,
+                height: 280,
                 child: Card(
                   margin: EdgeInsets.all(5),
                   child: ClipRRect(
