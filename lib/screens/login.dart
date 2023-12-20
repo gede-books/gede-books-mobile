@@ -109,7 +109,10 @@ class LoginPageState extends State<LoginPage> {
                   String message = response['message'];
                   String uname = response['username'];
 
-                  await _saveUsername(uname);
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.setBool('isLoggedIn', false);
+                  await prefs.setString('loggedInUsername', uname);
 
                   if (!context.mounted) return;
                   Navigator.pushReplacement(

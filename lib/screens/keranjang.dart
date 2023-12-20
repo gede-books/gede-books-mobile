@@ -1,10 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:gede_books/screens/kategori_buku.dart';
 import 'package:gede_books/widgets/empty_cart.dart';
 import 'package:http/http.dart' as http;
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:gede_books/models/cart.dart';
+import 'package:gede_books/models/product.dart';
+
 
 
 class ShopItem {
@@ -23,6 +27,19 @@ class ShopItem {
   });
 }
 
+Future<List<CartItem>> _fetchData() async {
+  final response = await http.get(Uri.parse("https://lidwina-eurora-gedebooks.stndar.dev/api/get_cart_json/"));
+
+  if (response.statusCode == 200) {
+    final List<dynamic> jsonResponse = json.decode(response.body);
+    List<CartItem> cartItemList = jsonResponse.map((item) => cartItemFromJson(json.encode(item))).toList();
+
+    return cartItemList;
+  } else {
+    throw Exception('Failed to load data. Status code: ${response.statusCode}');
+  }
+}
+
 class KeranjangPage extends StatefulWidget {
   KeranjangPage({Key? key}) : super(key: key);
 
@@ -31,31 +48,6 @@ class KeranjangPage extends StatefulWidget {
 }
 
 class _KeranjangPageState extends State<KeranjangPage> {
-  Future<List<ShopItem>> _fetchData() async {
-    final request = context.watch<CookieRequest>();
-    final response = await request.get("https://lidwina-eurora-gedebooks.stndar.dev/api/get_cart_json");
-
-    if (response.statusCode == 200) {
-      // Jika respons sukses (kode status 200 OK), parse data JSON
-      final List<dynamic> responseData = json.decode(response.body);
-
-      // Ubah data JSON menjadi list ShopItem
-      List<ShopItem> items = responseData.map((json) {
-        return ShopItem(
-          title: json['title'],
-          author: json['author'],
-          imagePath: json['imagePath'],
-          price: json['price'],
-          bookCode: json['bookCode'],
-        );
-      }).toList();
-
-      return items;
-    } else {
-      // Jika respons tidak sukses, lemparkan exception atau tangani sesuai kebutuhan
-      throw Exception('Failed to load data');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +55,7 @@ class _KeranjangPageState extends State<KeranjangPage> {
       appBar: AppBar(
         title: Text('Keranjang'),
       ),
-      body: FutureBuilder<List<ShopItem>>(
+      body: FutureBuilder<List<CartItem>>(
         future: _fetchData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -80,8 +72,12 @@ class _KeranjangPageState extends State<KeranjangPage> {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                final item = snapshot.data![index];
-                return ShopCard(item);
+                final cartItem = snapshot.data![index];
+                return Column(
+                  children: cartItem.cartItems.map((cartItemElement) {
+                    return ShopCard(cartItemElement);
+                  }).toList(),
+                );
               },
             );
           }
@@ -94,7 +90,7 @@ class _KeranjangPageState extends State<KeranjangPage> {
 
 
 class ShopCard extends StatelessWidget {
-  final ShopItem item;
+  final CartItemElement item;
 
   const ShopCard(this.item, {Key? key}) : super(key: key);
 
@@ -106,15 +102,14 @@ class ShopCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             // Tambahkan widget Image untuk menampilkan gambar
-            Image.asset(
-              'path/to/your/image/${item.imagePath}',  // Ganti dengan path atau URL sesuai kebutuhan
+            Image.network(
+              item.imageUrl, // Ganti dengan path atau URL sesuai kebutuhan
               width: 150,  // Sesuaikan lebar gambar sesuai kebutuhan
               height: 200, // Sesuaikan tinggi gambar sesuai kebutuhan
               fit: BoxFit.cover, // Sesuaikan fit gambar sesuai kebutuhan
             ),
             SizedBox(height: 10), // Tambahkan spasi antara gambar dan teks
             Text(item.title),
-            Text(item.author),
             Text("Price: Rp. ${item.price},-"),
             // ... (tambahkan widget atau informasi lainnya sesuai kebutuhan)
           ],

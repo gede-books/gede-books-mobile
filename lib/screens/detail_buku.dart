@@ -24,11 +24,8 @@ class BookDetailPage extends StatefulWidget {
   final String subjects;
   final String category;
   double rating = 0.0;
-  // final Function(Book) onAddToCart;
-
 
   BookDetailPage({
-    // required this.book,
     required this.title,
     required this.author,
     required this.imagePath,
@@ -39,7 +36,6 @@ class BookDetailPage extends StatefulWidget {
     required this.subjects,
     required this.category,
     required this.rating,
-    // required this.onAddToCart,
   });
 
   @override
@@ -142,43 +138,11 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     ElevatedButton(
                       onPressed: () async {
                         if (request.loggedIn) {
-                          try {
-                            // Membuat objek CartItemElement dari informasi buku
-                            CartItemElement bookToAdd = CartItemElement(
-                              id: widget.bookCode,
-                              title: widget.title,
-                              quantity: 1,  // Atur sesuai kebutuhan, mungkin berupa jumlah buku yang akan ditambahkan
-                              price: widget.price,
-                              totalPrice: widget.price,
-                              imageUrl: widget.imagePath,
-                            );
+                          // TODO pass data add to cart
+                          // endpoint: "https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}"
+                          final response = await http.post(Uri.parse("https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}"));
 
-                            // Mengonversi objek CartItemElement ke JSON
-                            String jsonBody = json.encode(bookToAdd.toJson());
-
-                            // Mengirim permintaan POST dengan body data JSON
-                            final response = await http.post(
-                              Uri.parse("https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}"),
-                              headers: {"Content-Type": 'application/json'},
-                              body: jsonBody,
-                            );
-
-                            print(response.statusCode);
-                            if (response.statusCode == 200) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Buku ditambahkan ke keranjang')),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Gagal menambahkan buku ke keranjang')),
-                              );
-                            }
-                          } catch (e) {
-                            print('Error: $e');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Terjadi kesalahan. Silakan coba lagi nanti')),
-                            );
-                          }
+                          print(response.statusCode);
                         }
                         else if (!request.loggedIn) {
                           Navigator.push(
