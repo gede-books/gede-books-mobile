@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gede_books/models/product.dart';
-import 'package:gede_books/screens/cari_buku.dart';
+import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/screens/detail_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
+import 'package:gede_books/models/product.dart';
+
 import 'package:http/http.dart' as http;
-import 'package:gede_books/screens/keranjang.dart';
-import 'package:gede_books/screens/login.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Book {
   final String title;
@@ -25,15 +21,16 @@ class Book {
   Book(this.title, this.author, this.imagePath, this.price, this.bookCode, this.language, this.year, this.subjects, this.category, this.rating);
 }
 
-Future<List<Book>> fetchBooks(String category, int page, int booksPerPage) async {
-  // URL mungkin perlu diubah untuk mendukung pagination
-  final response = await http.get(Uri.parse('https://lidwina-eurora-gedebooks.stndar.dev/json/?page=$page'));
+Future<List<Book>> fetchBooks(String keyword) async {
+  final response = await http.get(Uri.parse('https://lidwina-eurora-gedebooks.stndar.dev/json/'));
 
   if (response.statusCode == 200) {
     List<Product> products = productFromJson(response.body);
     List<Book> books = [];
+
     for (final product in products) {
-      if (product.fields.category.contains(category) &&
+      if (product.pk >= 1 && product.pk <= 100 &&
+          product.fields.title.toLowerCase().contains(keyword.toLowerCase()) &&
           product.pk != 238 && product.pk != 106) {
         final book = Book(
           product.fields.title,
@@ -51,10 +48,7 @@ Future<List<Book>> fetchBooks(String category, int page, int booksPerPage) async
       }
     }
 
-    // Mengambil sejumlah buku sesuai booksPerPage
-    int startIndex = (page - 1) * booksPerPage;
-    int endIndex = startIndex + booksPerPage;
-    return books.sublist(startIndex, endIndex <= books.length ? endIndex : books.length);
+    return books;
   } else {
     throw Exception('Failed to load books');
   }
@@ -62,30 +56,28 @@ Future<List<Book>> fetchBooks(String category, int page, int booksPerPage) async
 
 final TextEditingController searchController = TextEditingController();
 
-class AllBookPage extends StatefulWidget {
-  AllBookPage({Key? key}) : super(key: key);
+class SearchBookPage extends StatefulWidget {
+  final String title;
+
+  SearchBookPage({Key? key, required this.title}) : super(key: key);
 
   @override
-  _AllBookPageState createState() => _AllBookPageState();
+  _SearchBookPageState createState() => _SearchBookPageState();
 }
 
-class _AllBookPageState extends State<AllBookPage> {
+class _SearchBookPageState extends State<SearchBookPage> {
   late Future<List<Book>> allBooks;
-  int currentPage = 1;
-  final int booksPerPage = 10;
-  int totalBooks = 100; // Variabel untuk menyimpan total buku
   final double bookHeight = 110.0; // Tinggi tetap buku
 
-  @override
-  void initState() {
-    super.initState();
-    allBooks = fetchBooks("", currentPage, booksPerPage);
-  }
+@override
+void initState() {
+  super.initState();
+  allBooks = fetchBooks(widget.title);
+}
 
-  @override
-  Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>();
-    return Scaffold(
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         iconTheme: IconThemeData(color: Colors.white),
@@ -114,22 +106,7 @@ class _AllBookPageState extends State<AllBookPage> {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              if (request.loggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => KeranjangPage(),
-                  ),
-                );
-              }
-              else if (!request.loggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(),
-                  ),
-                );
-              }
+              // Handle shopping cart action
             },
           ),
         ],
@@ -169,38 +146,36 @@ class _AllBookPageState extends State<AllBookPage> {
           ),
         ),
       ),
-      drawer: const LeftDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Column(
-            children: <Widget>[
-              buildBookSection('Semua Buku', allBooks),
-              buildPageNavigation(),
-              buildPageSelection(),
-            ],
-          ),
+    drawer: const LeftDrawer(),
+    body: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Column(
+          children: <Widget>[
+            buildBookSection('Kategori buku', allBooks),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
-    return FutureBuilder<List<Book>>(
-      future: booksFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        } else if (snapshot.hasData) {
-          return _buildSection(sectionTitle, snapshot.data!);
-        } else {
-          return Text("No data available");
-        }
-      },
-    );
-  }
+Widget buildBookSection(String sectionTitle, Future<List<Book>> booksFuture) {
+  return FutureBuilder<List<Book>>(
+    future: booksFuture,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return CircularProgressIndicator();
+      } else if (snapshot.hasError) {
+        return Text("Error: ${snapshot.error}");
+      } else if (snapshot.hasData) {
+        return _buildSection(sectionTitle, snapshot.data!);
+      } else {
+        return Text("No data available");
+      }
+    },
+  );
+}
 
   Widget _buildSection(String sectionTitle, List<Book> books) {
     return Column(
@@ -334,109 +309,7 @@ class _AllBookPageState extends State<AllBookPage> {
   );
 }
 
-  Widget buildPageNavigation() {
-    int totalPages = (totalBooks / booksPerPage).ceil(); // Menghitung total halaman
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            if (currentPage > 1) {
-              setState(() {
-                currentPage--;
-                allBooks = fetchBooks("", currentPage, booksPerPage);
-              });
-            }
-          },
-        ),
-        Text('Halaman $currentPage dari $totalPages'), // Menampilkan informasi halaman
-        IconButton(
-          icon: Icon(Icons.arrow_forward_ios),
-          onPressed: () {
-            if (currentPage < totalPages) {
-              setState(() {
-                currentPage++;
-                allBooks = fetchBooks("", currentPage, booksPerPage);
-              });
-            }
-          },
-        ),
-      ],
-    );
-  }
-
-Widget buildPageSelection() {
-  int totalPages = (totalBooks / booksPerPage).ceil();
-  List<Widget> pageList = [];
-
-  // Fungsi untuk membuat tombol halaman
-  Widget pageButton(int page) {
-    return TextButton(
-      onPressed: () => goToPage(page),
-      child: Text(
-        '$page',
-        style: TextStyle(
-          fontWeight: currentPage == page ? FontWeight.bold : FontWeight.normal,
-          color: currentPage == page ? Colors.blue : Colors.black, // Warna biru jika halaman saat ini
-        ),
-      ),
-    );
-  }
-
-  // Fungsi untuk menambahkan pemisah yang lebih kecil
-  void addSeparator() {
-    pageList.add(SizedBox(width: 1)); // Sesuaikan lebar sesuai kebutuhan
-  }
-
-  // Selalu tambahkan halaman 1
-  pageList.add(pageButton(1));
-
-  // Tambahkan ellipsis jika perlu di sebelah kanan halaman 1
-  if (currentPage > 3) {
-    addSeparator();
-    pageList.add(Text('...'));
-  }
-
-  // Tambahkan halaman saat ini, sebelum, dan sesudah, tetapi tidak termasuk 1 dan terakhir
-  if (currentPage > 2 && currentPage < totalPages) {
-    addSeparator();
-    pageList.add(pageButton(currentPage - 1));
-  }
-  if (currentPage != 1 && currentPage != totalPages) {
-    addSeparator();
-    pageList.add(pageButton(currentPage));
-  }
-  if (currentPage < totalPages - 1 && currentPage > 1) {
-    addSeparator();
-    pageList.add(pageButton(currentPage + 1));
-  }
-
-  // Tambahkan ellipsis jika perlu di sebelah kiri halaman terakhir
-  if (currentPage < totalPages - 2) {
-    addSeparator();
-    pageList.add(Text('...'));
-  }
-
-  // Selalu tambahkan halaman terakhir
-  if (totalPages > 1) {
-    addSeparator();
-    pageList.add(pageButton(totalPages));
-  }
-
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: pageList,
-  );
-}
-
-  void goToPage(int page) {
-    setState(() {
-      currentPage = page;
-      allBooks = fetchBooks("", currentPage, booksPerPage);
-    });
-  }
 
   String processTitle(String title) {
     var words = title.split(' ');
