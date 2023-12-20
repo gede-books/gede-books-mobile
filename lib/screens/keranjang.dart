@@ -11,14 +11,11 @@ class ShopItem {
 class KeranjangPage extends StatelessWidget {
   KeranjangPage({Key? key}) : super(key: key);
 
-  final List<ShopItem> items = [
-
-  ];
-
   void _onSearch() {
     // Define what happens when the search icon is tapped.
   }
 
+  final List<ShopItem> items = [];
 
   @override
   Widget build(BuildContext context) {

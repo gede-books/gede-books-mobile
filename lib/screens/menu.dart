@@ -4,7 +4,7 @@ import 'package:gede_books/screens/cari_buku.dart';
 import 'package:gede_books/screens/detail_buku.dart';
 import 'package:gede_books/screens/kategori_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
-import 'package:gede_books/models/product.dart'; // Pastikan path ini benar
+import 'package:gede_books/models/product.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -34,7 +34,7 @@ Future<List<Book>> fetchBooks(String category) async {
 
     for (final product in products) {
       if (booksTaken >= 5) {
-        break; // Jika sudah mengambil 100 buku, keluar dari loop
+        break;
       }
       
       if (product.fields.category.contains(category) &&

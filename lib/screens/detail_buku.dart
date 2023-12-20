@@ -100,10 +100,84 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center
                 ),
-                SizedBox(height: 20), // Space between title and image
-                Image.asset(widget.imagePath),
-                Text("Author: ${widget.author}"),
-                Text("Price: Rp. ${widget.price},-"),
+                SizedBox(height: 15), // Space between title and image
+                Image.asset(
+                  widget.imagePath,
+                  height: 400,
+                ),
+                SizedBox(height: 5),
+                Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "${widget.author}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20, // Adjust the font size here
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Rp. ${widget.price},-",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.blue[900],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+Center(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Bahasa",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(width: 8), // Add some space between "Bahasa" and the language name
+          Text(
+            "${widget.language.toString().split('.').last}", // Extract the language name from the enum
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ],
+  ),
+),
+                SizedBox(height: 10),
+                Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Kategori:", style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        widget.category == " "
+                            ? "Tidak ada informasi kategori"
+                            : widget.category,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontStyle: widget.category == " " ? FontStyle.italic : FontStyle.normal,
+                          color: widget.category == " " ? Colors.red : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 20), // Space before buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
