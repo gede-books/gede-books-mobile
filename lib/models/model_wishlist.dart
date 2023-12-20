@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-WishlistItem cartItemFromJson(String str) => WishlistItem.fromJson(json.decode(str));
+WishlistItem wishlistItemFromJson(String str) => WishlistItem.fromJson(json.decode(str));
 
 String wishlistItemToJson(WishlistItem data) => json.encode(data.toJson());
 
