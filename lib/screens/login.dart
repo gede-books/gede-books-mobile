@@ -100,7 +100,7 @@ class LoginPageState extends State<LoginPage> {
                 // Cek kredensial
                 // Untuk menyambungkan Android emulator dengan Django pada localhost,
                 // gunakan URL http://10.0.2.2/
-                final response = await request.login("https://gedebooks-a07-tk.pbp.cs.ui.ac.id/auth/login/", {
+                final response = await request.login("https://lidwina-eurora-gedebooks.stndar.dev/auth/login/", {
                   'username': username,
                   'password': password,
                 });
@@ -109,7 +109,10 @@ class LoginPageState extends State<LoginPage> {
                   String message = response['message'];
                   String uname = response['username'];
 
-                  await _saveUsername(uname);
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.setBool('isLoggedIn', false);
+                  await prefs.setString('loggedInUsername', uname);
 
                   if (!context.mounted) return;
                   Navigator.pushReplacement(
@@ -161,4 +164,5 @@ class LoginPageState extends State<LoginPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', username);
   }
+
 }
