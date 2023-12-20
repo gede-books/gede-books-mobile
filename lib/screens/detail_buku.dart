@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-// import 'package:gede_books/models/cart.dart';
+import 'package:gede_books/models/cart.dart';
 import 'package:gede_books/models/wishlist_model.dart';
 
 class BookDetailPage extends StatefulWidget {
