@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:gede_books/screens/detail_buku.dart';
-import 'package:gede_books/screens/menu.dart';
-import 'package:gede_books/widgets/left_drawer.dart';
 import 'package:gede_books/widgets/empty_cart.dart';
+import 'package:http/http.dart' as http;
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+
 
 class ShopItem {
   final String title;
@@ -23,115 +26,71 @@ class ShopItem {
 class KeranjangPage extends StatefulWidget {
   KeranjangPage({Key? key}) : super(key: key);
 
-  final List<ShopItem> items = [];
-
   @override
   _KeranjangPageState createState() => _KeranjangPageState();
 }
 
 class _KeranjangPageState extends State<KeranjangPage> {
+  Future<List<ShopItem>> _fetchData() async {
+    final request = context.watch<CookieRequest>();
+    final response = await request.get("https://lidwina-eurora-gedebooks.stndar.dev/api/get_cart_json");
+
+    if (response.statusCode == 200) {
+      // Jika respons sukses (kode status 200 OK), parse data JSON
+      final List<dynamic> responseData = json.decode(response.body);
+
+      // Ubah data JSON menjadi list ShopItem
+      List<ShopItem> items = responseData.map((json) {
+        return ShopItem(
+          title: json['title'],
+          author: json['author'],
+          imagePath: json['imagePath'],
+          price: json['price'],
+          bookCode: json['bookCode'],
+        );
+      }).toList();
+
+      return items;
+    } else {
+      // Jika respons tidak sukses, lemparkan exception atau tangani sesuai kebutuhan
+      throw Exception('Failed to load data');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[850],
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/GEDE-Books Logo.png',
-                width: 30,
-                height: 30,
-              ),
-              SizedBox(width: 8),
-              Text(
-                'GEDE-Books',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        elevation: 500,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => KeranjangPage(),
-                ),
-              );
-            },
-          ),
-        ],
+        title: Text('Keranjang'),
       ),
-      body: widget.items.isEmpty
-          ? EmptyCart()
-          : ListView.builder(
-        itemCount: widget.items.length,
-        itemBuilder: (context, index) {
-          final item = widget.items[index];
-          return ShopCard(item);
+      body: FutureBuilder<List<ShopItem>>(
+        future: _fetchData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return EmptyCart();
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final item = snapshot.data![index];
+                return ShopCard(item);
+              },
+            );
+          }
         },
       ),
     );
   }
-
-  // void tambahKeKeranjang(Book book) {
-  //   bool isBookInCart = widget.items.any((item) => item.bookCode == book.bookCode);
-
-  //   if (!isBookInCart) {
-  //     setState(() {
-  //       widget.items.add(ShopItem(
-  //         title: book.title,
-  //         author: book.author,
-  //         imagePath: book.imagePath,
-  //         price: book.price,
-  //         bookCode: book.bookCode,
-  //       ));
-  //     });
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Buku ditambahkan ke keranjang')),
-  //     );
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Buku sudah ada di keranjang')),
-  //     );
-  //   }
-  // }
 }
 
-class KeranjangModel extends ChangeNotifier {
-  List<ShopItem> items = [];
-
-  void tambahKeKeranjang(Book book) {
-    bool isBookInCart = items.any((item) => item.bookCode == book.bookCode);
-
-    if (!isBookInCart) {
-      items.add(ShopItem(
-        title: book.title,
-        author: book.author,
-        imagePath: book.imagePath,
-        price: book.price,
-        bookCode: book.bookCode,
-      ));
-      notifyListeners(); // Notify listeners of the change
-      print("yes");
-    } else {
-      // Show a snackbar or handle the case where the book is already in the cart
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(content: Text('Buku sudah ada di keranjang')),
-      // );
-      print("no");
-    }
-  }
-}
 
 
 class ShopCard extends StatelessWidget {

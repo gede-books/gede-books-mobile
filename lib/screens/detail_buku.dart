@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:gede_books/models/cart.dart';
 
 class BookDetailPage extends StatefulWidget {
   // final Book book;
@@ -141,10 +142,43 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     ElevatedButton(
                       onPressed: () async {
                         if (request.loggedIn) {
-                          /*
-                          TODO
-                          */
+                          try {
+                            // Membuat objek CartItemElement dari informasi buku
+                            CartItemElement bookToAdd = CartItemElement(
+                              id: widget.bookCode,
+                              title: widget.title,
+                              quantity: 1,  // Atur sesuai kebutuhan, mungkin berupa jumlah buku yang akan ditambahkan
+                              price: widget.price,
+                              totalPrice: widget.price,
+                              imageUrl: widget.imagePath,
+                            );
 
+                            // Mengonversi objek CartItemElement ke JSON
+                            String jsonBody = json.encode(bookToAdd.toJson());
+
+                            // Mengirim permintaan POST dengan body data JSON
+                            final response = await http.post(
+                              Uri.parse("https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}"),
+                              headers: {"Content-Type": 'application/json'},
+                              body: jsonBody,
+                            );
+
+                            print(response.statusCode);
+                            if (response.statusCode == 200) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Buku ditambahkan ke keranjang')),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Gagal menambahkan buku ke keranjang')),
+                              );
+                            }
+                          } catch (e) {
+                            print('Error: $e');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Terjadi kesalahan. Silakan coba lagi nanti')),
+                            );
+                          }
                         }
                         else if (!request.loggedIn) {
                           Navigator.push(
