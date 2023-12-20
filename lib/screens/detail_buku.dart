@@ -1,8 +1,19 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:gede_books/models/product.dart';
 import 'package:gede_books/screens/menu.dart';
+import 'package:gede_books/screens/keranjang.dart';
+import 'package:gede_books/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:gede_books/models/cart.dart';
 
 class BookDetailPage extends StatefulWidget {
+  // final Book book;
   final String title;
   final String author;
   final String imagePath;
@@ -37,6 +48,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
@@ -66,7 +78,22 @@ class _BookDetailPageState extends State<BookDetailPage> {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Handle shopping cart action
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => KeranjangPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
         ],
@@ -183,10 +210,22 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        /*
-                        TODO: Tambahkan logic untuk memasukkan ke keranjang di sini
-                        */
+                      onPressed: () async {
+                        if (request.loggedIn) {
+                          // TODO pass data add to cart
+                          // endpoint: "https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}"
+                          final response = await http.post(Uri.parse("https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}"));
+
+                          print(response.statusCode);
+                        }
+                        else if (!request.loggedIn) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
+                        }
                         setState(() {
                           isCartPressed = !isCartPressed;
                         });
