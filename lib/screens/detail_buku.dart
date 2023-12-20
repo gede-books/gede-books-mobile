@@ -42,9 +42,28 @@ class BookDetailPage extends StatefulWidget {
   _BookDetailPageState createState() => _BookDetailPageState();
 }
 
+  Future<bool> _getLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
+  }
+
 class _BookDetailPageState extends State<BookDetailPage> {
   bool isCartPressed = false;
   bool isWishListPressed = false;
+  bool isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _getLoginStatus();
+  }
+
+  Future<void> _getLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,14 +156,23 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
-                        if (request.loggedIn) {
+                        if (isLoggedIn) {
                           // TODO pass data add to cart
                           // endpoint: "https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}"
-                          final response = await http.post(Uri.parse("https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}"));
+                          final response = await http.post(Uri.parse("https://lidwina-eurora-gedebooks.stndar.dev/add_to_cart/${widget.bookCode}/"));
 
+                          print("sini");
                           print(response.statusCode);
+                          print(response.body);
+
+                          if (response.statusCode == 302) {
+                            final redirectUrl = response.headers['location'];
+                            // ignore: unused_local_variable
+                            final redirectedResponse = await http.get(Uri.parse(redirectUrl!));
+                          }
                         }
-                        else if (!request.loggedIn) {
+                        else if (!isLoggedIn) {
+                          print("situ");
                           Navigator.push(
                             context,
                             MaterialPageRoute(

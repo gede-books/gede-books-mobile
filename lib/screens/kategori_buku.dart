@@ -3,8 +3,11 @@ import 'package:gede_books/screens/keranjang.dart';
 import 'package:gede_books/screens/detail_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
 import 'package:gede_books/models/product.dart';
+import 'package:gede_books/screens/login.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class Book {
   final String title;
@@ -75,6 +78,7 @@ void initState() {
 
 @override
 Widget build(BuildContext context) {
+  final request = context.watch<CookieRequest>();
   return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
@@ -104,7 +108,22 @@ Widget build(BuildContext context) {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Handle shopping cart action
+              if (request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => KeranjangPage(),
+                  ),
+                );
+              }
+              else if (!request.loggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              }
             },
           ),
         ],
