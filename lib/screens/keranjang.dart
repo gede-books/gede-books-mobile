@@ -56,14 +56,24 @@ class _KeranjangPageState extends State<KeranjangPage> {
       final request = context.watch<CookieRequest>();
       final response = await request.get("https://lidwina-eurora-gedebooks.stndar.dev/api/get_cart_json/");
 
-      List<CartItemElement> result = [];
-        for (var d in response) {
-          if (d != null) {
-            result.add(CartItemElement.fromJson(d));
-          }
-        }
+      // List<CartItemElement> result = [];
+      //   for (var d in response) {
+      //     if (d != null) {
+      //       result.add(CartItemElement.fromJson(d));
+      //     }
+      //   }
 
-      return result;   
+      // return result;   
+      if (response != null) {
+        if (response['status'] == 'success') {
+          final List<dynamic> jsonResponse = response['data'];
+          List<CartItemElement> result = jsonResponse.map((data) => CartItemElement.fromJson(data)).toList();
+          return result;
+        }  
+      } else {
+        print('Failed to fetch data. Response is null.');
+      }
+      return [];
     }
   
 }
