@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/models/product.dart';
+import 'package:gede_books/screens/cari_buku.dart';
 import 'package:gede_books/screens/detail_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
 import 'package:http/http.dart' as http;
@@ -53,6 +54,8 @@ Future<List<Book>> fetchBooks(String category, int page, int booksPerPage) async
     throw Exception('Failed to load books');
   }
 }
+
+final TextEditingController searchController = TextEditingController();
 
 class AllBookPage extends StatefulWidget {
   AllBookPage({Key? key}) : super(key: key);
@@ -117,6 +120,7 @@ class _AllBookPageState extends State<AllBookPage> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextField(
+                  controller: searchController,
                   style: TextStyle(
                     fontSize: 14.0,
                   ),
@@ -430,6 +434,19 @@ Widget buildPageSelection() {
   }
 
   void _onSearch() {
-    // Implementation of _onSearch
+    String searchQuery = searchController.text.trim();
+    if (searchQuery.isNotEmpty) {
+      // Clear the search query and trigger a rebuild of the widget
+      setState(() {
+        searchController.clear();
+      });
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SearchBookPage(title: searchQuery),
+        ),
+      );
+    }
   }
 }

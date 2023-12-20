@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/screens/keranjang.dart';
+import 'package:gede_books/screens/cari_buku.dart';
 import 'package:gede_books/screens/detail_buku.dart';
 import 'package:gede_books/screens/kategori_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
@@ -60,6 +61,8 @@ Future<List<Book>> fetchBooks(String category) async {
     throw Exception('Failed to load books');
   }
 }
+
+final TextEditingController searchController = TextEditingController();
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key}) : super(key: key);
@@ -131,6 +134,7 @@ Widget build(BuildContext context) {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextField(
+                  controller: searchController,
                   style: TextStyle(
                     fontSize: 14.0,
                   ),
@@ -534,6 +538,19 @@ Widget _buildSection(String sectionTitle, List<Book> books) {
   }
 
   void _onSearch() {
-    // Implementasi pencarian
+    String searchQuery = searchController.text.trim();
+    if (searchQuery.isNotEmpty) {
+      // Clear the search query and trigger a rebuild of the widget
+      setState(() {
+        searchController.clear();
+      });
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SearchBookPage(title: searchQuery),
+        ),
+      );
+    }
   }
 }

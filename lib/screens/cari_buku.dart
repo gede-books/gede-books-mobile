@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gede_books/screens/keranjang.dart';
-import 'package:gede_books/screens/cari_buku.dart';
 import 'package:gede_books/screens/detail_buku.dart';
 import 'package:gede_books/widgets/left_drawer.dart';
 import 'package:gede_books/models/product.dart';
@@ -22,7 +21,7 @@ class Book {
   Book(this.title, this.author, this.imagePath, this.price, this.bookCode, this.language, this.year, this.subjects, this.category, this.rating);
 }
 
-Future<List<Book>> fetchBooks(String category) async {
+Future<List<Book>> fetchBooks(String keyword) async {
   final response = await http.get(Uri.parse('https://lidwina-eurora-gedebooks.stndar.dev/json/'));
 
   if (response.statusCode == 200) {
@@ -31,7 +30,7 @@ Future<List<Book>> fetchBooks(String category) async {
 
     for (final product in products) {
       if (product.pk >= 1 && product.pk <= 100 &&
-          product.fields.category.contains(category) &&
+          product.fields.title.toLowerCase().contains(keyword.toLowerCase()) &&
           product.pk != 238 && product.pk != 106) {
         final book = Book(
           product.fields.title,
@@ -57,23 +56,23 @@ Future<List<Book>> fetchBooks(String category) async {
 
 final TextEditingController searchController = TextEditingController();
 
-class CategoryBookPage extends StatefulWidget {
-  final String category;
+class SearchBookPage extends StatefulWidget {
+  final String title;
 
-  CategoryBookPage({Key? key, required this.category}) : super(key: key);
+  SearchBookPage({Key? key, required this.title}) : super(key: key);
 
   @override
-  _CategoryBookPageState createState() => _CategoryBookPageState();
+  _SearchBookPageState createState() => _SearchBookPageState();
 }
 
-class _CategoryBookPageState extends State<CategoryBookPage> {
+class _SearchBookPageState extends State<SearchBookPage> {
   late Future<List<Book>> allBooks;
   final double bookHeight = 110.0; // Tinggi tetap buku
 
 @override
 void initState() {
   super.initState();
-  allBooks = fetchBooks(widget.category);
+  allBooks = fetchBooks(widget.title);
 }
 
 @override
